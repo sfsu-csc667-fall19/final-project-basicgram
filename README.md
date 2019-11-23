@@ -5,7 +5,8 @@
 - Run mongo with `$ mongod --dbpath=...`
 - Run all servers manually, or simply run `pm2 start process.config.js`
 - Start React development server with `npm start`.
-- Please *tab* and *comment* or else you will just piss everyone off, unless it's a last minute commit.
+- Please *tab* properly and *comment* well or else you will just piss everyone off, unless it's a last minute commit.
+- We using camel-case OK. ie. `somethingIsTrue`
 
 ## Dockerizing
 Build all images and push to dockerhub
@@ -16,7 +17,10 @@ Build all images and push to dockerhub
 - Run `$ npm run deploy`.
 
 ## Communication
-Can someone put the excel sheet of the features here?
+https://trello.com/invite/b/flu8jsKV/ed8a0fa697fde098ebd9183eb84b053b/basicgram  
 
 ## Architecture
-Someone put the image of the architecture here for reference?
+Just look at the 667_final_project_proposal.pdf  
+
+## Notes/Documentation
+idk if you guys put confusing shit in your code make sure to comment or note it here I guess.
