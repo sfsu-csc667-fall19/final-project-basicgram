@@ -91,7 +91,7 @@ class UserLibrary {
     static verifyUserToken(userId, token, res) {
         this._getUserById(userId).then((user) => {
             let valid = false;
-            if (user.token === token) valid = true;
+            if (user.token == token) valid = true;
 
             if (res) {
                 res.send({

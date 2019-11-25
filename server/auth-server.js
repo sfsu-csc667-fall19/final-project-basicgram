@@ -17,7 +17,6 @@ mongoose.connection.on('error', (error) => {
     console.log("ERROR: " + error);
 });
 
-
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser());
@@ -26,7 +25,7 @@ app.use(bodyParser());
 
 app.post('/auth/verify', (req, res) => {
     const token = req.body.token;
-    const userId = req.body.user_id;
+    const userId = req.body.userId;
 
     UserLib.verifyUserToken(userId, token, res);
 });
