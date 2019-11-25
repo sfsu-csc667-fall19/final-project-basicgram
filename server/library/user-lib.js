@@ -8,12 +8,15 @@ class UserLibrary {
     static createUser(username, password, name, email) {
         // TODO: Validate input
         let token = new ObjectId();
+        let current_date = new Date();
 
         const newUser = new User({
             username: username,
             password: password,
             name: name,
-            created_at: new Date(),
+            email: email,
+            created_at: current_date,
+            edited_at: current_date,
             token: token
         });
 

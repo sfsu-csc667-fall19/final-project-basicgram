@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const mongoose = require('mongoose');
 
-const UserLib = require('./library/user.js');
+const UserLib = require('./library/user-lib.js');
 
 // TODO: Use config file or env vars for database name and port
 const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
@@ -38,7 +38,7 @@ app.post('/auth/login', (req, res) => {
     UserLib.loginUser(username, password, res);
 });
 
-app.post('/auth/create', (req, res) => {
+app.post('/auth/create-user', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     const name = req.body.name;
