@@ -11,8 +11,7 @@ Request:
 {
     username: str,
     password: str,
-    firstName: str,
-    lastName: str,
+    name: str,
     email: str
 }
 

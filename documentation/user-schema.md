@@ -2,12 +2,13 @@
 ```
 {
     _id: ObjectId
-    username: str,
-    password: str [encrypted],
-    email: str,
-    firstName: str,
-    lastName: str,
-    token: ObjectId
+    username: String,
+    password: String [encrypted],
+    email: String,
+    name: String,
+    token: ObjectId,
+    created_at: Date,
+    edited_at: Date
 }
 ```
 
