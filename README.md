@@ -12,7 +12,7 @@
 Build all images and push to dockerhub
 - If you do not have a dockerhub account, create one.
 - Login to docker with `$ docker login`
-- In package.json and in devops/basicgram.Dockerfile, replace the placeholder `someonesdockerhubid` with your own docker hub id (on the ones you intend on pushing to dockerhub at least).
+- In package.json and in devops/docker-compose.yml, replace the placeholder `someonesdockerhubid` with your own docker hub id (on the ones you intend on pushing to dockerhub at least).
 - Run `$ npm run build-all-docker` to build all docker images, or choose the one you plan on pushing up to dockerhub.
 - Run `$ npm run deploy`.
 
