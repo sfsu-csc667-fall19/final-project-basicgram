@@ -5,7 +5,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 
 class UserLibrary {
-    static createUser(username, password, name, email) {
+    static createUser(username, password, name, email, res) {
         // TODO: Validate input
         let token = new ObjectId();
         let current_date = new Date();
@@ -20,11 +20,21 @@ class UserLibrary {
             token: token
         });
 
-        newUser.save((err) => {
-            if (err) throw err;
-        });
+        newUser.save((error) => {
+            if (error) {
+                console.log(error.name);
+                res.send({
+                    error: error
+                });
 
-        return newUser
+                return;
+            }
+
+            res.send({
+                token: newUser.token,
+                userId: newUser._id
+            });
+        });
     };
 
     // TODO: Pass in res
@@ -51,7 +61,13 @@ class UserLibrary {
     }
 
     static loginUser(username, password, res) {
-        this._getUserByUsername(username).then((user) => {
+        this._getUserByUsername(username).then((error, user) => {
+            if (error) {
+                console.log(error);
+                res.send({error, });
+                return;
+            }
+
             if (user.password === password) {
                 res.send({
                     userId: user._id,
@@ -84,12 +100,20 @@ class UserLibrary {
         return User.findOne({ username: username });
     }
 
+    // Something to consider: Can use User.findById(userId).exec(callback), might be cleaner.
     static _getUserById(userId) {
         return User.findById(userId);
     }
 
     static verifyUserToken(userId, token, res) {
-        this._getUserById(userId).then((user) => {
+        this._getUserById(userId).then((error, user) => {
+            if (error) {
+                console.log(error);
+                res.send({
+                    error,
+                });
+            }
+
             let valid = false;
             if (user.token == token) valid = true;
 

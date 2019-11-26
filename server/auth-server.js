@@ -44,14 +44,7 @@ app.post('/auth/create-user', (req, res) => {
     const email = req.body.email;
 
     try {
-        const user = UserLib.createUser(username, password, name, email);
-        const token = user.token;
-        const userId = user._id;
-
-        res.send({
-            token,
-            userId,
-        })
+        UserLib.createUser(username, password, name, email, res);
     } catch (err) {
         res.send({
             err,
