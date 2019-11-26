@@ -7,26 +7,17 @@ import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 
-const Message = ({ data }) => (<div>{data}</div>);
+const App = ({ dispatch }) => {
+  // React.useEffect(() => {
+  //   axios.get('/basicgram/getMessages')
+  //     .then((res) => {
+  //       dispatch(updateMessages(res.data));
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // }, []);
 
-const App = ({ dispatch, text, messages }) => {
-  React.useEffect(() => {
-    axios.get('/basicgram/getMessages')
-      .then((res) => {
-        dispatch(updateMessages(res.data));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
-
-  const onSubmit = () => {
-    dispatch(submitMessage());
-  }
-
-  const handleTextChange = (e) => {
-    dispatch(handlTextChange(e.target.value));
-  }
   return (
     <div className="App">
       <Switch>
@@ -40,8 +31,8 @@ const App = ({ dispatch, text, messages }) => {
 
 const mapStateToProps = (state) => {
   return {
-    messages: state.messageReducer.messages,
-    text: state.messageReducer.text,
+    // messages: state.messageReducer.messages,
+    // text: state.messageReducer.text,
   };
 };
 

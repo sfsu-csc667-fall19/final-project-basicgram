@@ -10,7 +10,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-
 const useStyles = makeStyles(theme => ({
     root: {
         height: '100vh',
@@ -45,6 +44,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login() {
     const classes = useStyles();
+    const [userName, setUserName] = React.useState("");
+    const [userPassword, setUserPassword] = React.useState("");
 
     return (
         <Grid container component="main" className={classes.root}>
@@ -58,7 +59,7 @@ export default function Login() {
                     <Typography component="h1" variant="h4">
                         Sign in
           </Typography>
-                    <div className={classes.form} noValidate>
+                    <form className={classes.form} onSubmit={e => e.preventDefault()} noValidate>
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -69,6 +70,8 @@ export default function Login() {
                             name="username"
                             autoComplete="username"
                             autoFocus
+                            value={userName}
+                            onChange={e => setUserName(e.target.value)}
                         />
                         <TextField
                             variant="outlined"
@@ -80,6 +83,8 @@ export default function Login() {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            value={userPassword}
+                            onChange={e => setUserPassword(e.target.value)}
                         />
                         <Button
                             type="submit"
@@ -96,7 +101,7 @@ export default function Login() {
                                 </Link>
                             </Grid>
                         </Grid>
-                    </div>
+                    </form>
                 </div>
             </Grid>
         </Grid>
