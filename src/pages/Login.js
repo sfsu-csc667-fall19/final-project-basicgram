@@ -49,8 +49,8 @@ export default function Login() {
     return (
         <Grid container component="main" className={classes.root}>
             <CssBaseline />
-            <Grid item xs={false} sm={4} md={7} className={classes.image} />
-            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} className={classes.container} square>
+            <Grid item xs={false} sm={4} md={8} className={classes.image} />
+            <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} className={classes.container} square>
                 <div className={classes.paper}>
                     <Avatar className={classes.avatar}>
                         <LockOutlinedIcon />
@@ -58,16 +58,16 @@ export default function Login() {
                     <Typography component="h1" variant="h4">
                         Sign in
           </Typography>
-                    <form className={classes.form} noValidate>
+                    <div className={classes.form} noValidate>
                         <TextField
                             variant="outlined"
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
                             autoFocus
                         />
                         <TextField
@@ -96,7 +96,7 @@ export default function Login() {
                                 </Link>
                             </Grid>
                         </Grid>
-                    </form>
+                    </div>
                 </div>
             </Grid>
         </Grid>

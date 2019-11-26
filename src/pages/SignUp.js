@@ -51,8 +51,8 @@ export default function SignUp() {
     return (
         <Grid container component="main" className={classes.root}>
             <CssBaseline />
-            <Grid item xs={false} sm={4} md={7} className={classes.image} />
-            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} className={classes.container} square>
+            <Grid item xs={false} sm={4} md={8} className={classes.image} />
+            <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} className={classes.container} square>
                 <div className={classes.paper}>
                     <Avatar className={classes.avatar}>
                         <LockOutlinedIcon />
@@ -60,29 +60,29 @@ export default function SignUp() {
                     <Typography component="h1" variant="h4">
                         Sign Up
           </Typography>
-                    <form className={classes.form} noValidate>
+                    <div className={classes.form} noValidate>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     autoComplete="fname"
-                                    name="firstName"
+                                    name="fullName"
                                     variant="outlined"
                                     required
                                     fullWidth
-                                    id="firstName"
-                                    label="First Name"
+                                    id="fullName"
+                                    label="Full Name"
                                     autoFocus
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     variant="outlined"
                                     required
                                     fullWidth
-                                    id="lastName"
-                                    label="Last Name"
-                                    name="lastName"
-                                    autoComplete="lname"
+                                    id="userName"
+                                    label="Username"
+                                    name="userName"
+                                    autoComplete="uname"
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -124,7 +124,7 @@ export default function SignUp() {
               </Link>
                             </Grid>
                         </Grid>
-                    </form>
+                    </div>
                 </div>
             </Grid>
         </Grid>
