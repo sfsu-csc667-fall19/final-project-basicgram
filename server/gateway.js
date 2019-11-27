@@ -40,7 +40,7 @@ appServer.on('upgrade', (req, socket, head) => {
   wsProxy.ws(req, socket, head);
 });
 
-const authServerHost = process.env.FRONT_END_HOST || 'http://localhost:3002';
+const authServerHost = process.env.AUTH_SERVER_HOST || 'http://localhost:3002';
 console.log(`Auth service proxies to: ${authServerHost}`);
 app.all('/auth*', (req, res) => {
   // for auth
