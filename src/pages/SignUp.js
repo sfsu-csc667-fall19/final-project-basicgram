@@ -15,7 +15,6 @@ import PropTypes from "prop-types";
 import { Link, withRouter } from 'react-router-dom'
 import { connect } from "react-redux";
 import { registerUser } from "../redux/actions/authActions";
-import Login from './Login';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -49,25 +48,29 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const SignUp = ({ registerUser, history }) => {
+const SignUp = ({ registerUser, history, auth }) => {
     const classes = useStyles();
     const [userEmail, setUserEmail] = React.useState("");
     const [userName, setUserName] = React.useState("");
     const [userFName, setUserFName] = React.useState("");
     const [userPassword, setUserPassword] = React.useState("");
-    const [errors, setErrors] = React.useState({});
+    // const [errors, setErrors] = React.useState({});
 
-    const submit = e => {
+    const submit = async (e) => {
         e.preventDefault();
         const newUser = {
             username: userName,
             password: userPassword,
             name: userFName,
-            email: userEmail, 
-          };
+            email: userEmail,
+        };
+        console.log(newUser)
         registerUser(newUser, history)
     }
-    
+
+    if (auth.isAuthenticated) {
+        history.push("/feed");
+      }
     return (
         <Grid container component="main" className={classes.root}>
             <CssBaseline />
@@ -168,9 +171,9 @@ SignUp.propTypes = {
 const mapStateToProps = state => ({
     auth: state.auth,
     errors: state.errors
-  });
-  
-  export default connect(
+});
+
+export default connect(
     mapStateToProps,
     { registerUser }
-  )(withRouter(SignUp));
+)(withRouter(SignUp));

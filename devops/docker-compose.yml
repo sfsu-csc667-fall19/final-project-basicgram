@@ -25,6 +25,7 @@ services:
       - webnet
     environment: # placed into container
       - FRONT_END_HOST=http://frontend:3000
+      - AUTH_SERVER_HOST=http://auth:3002
       - BASICGRAM_HOST=http://basicgram:5000
       - WEBSOCKET_HOST=http://websocket:6000/websocket
   frontend:
