@@ -40,11 +40,19 @@ appServer.on('upgrade', (req, socket, head) => {
   wsProxy.ws(req, socket, head);
 });
 
-const fronEndHost = process.env.FRONT_END_HOST || 'http://localhost:3000';
-console.log(`Front end proxies to: ${fronEndHost}`);
+const authServerHost = process.env.FRONT_END_HOST || 'http://localhost:3002';
+console.log(`Auth service proxies to: ${authServerHost}`);
+app.all('/auth*', (req, res) => {
+  // for auth
+  console.log("Routing to Auth: ", req);
+  apiProxy.web(req, res, { target: authServerHost });
+});
+
+const frontEndHost = process.env.FRONT_END_HOST || 'http://localhost:3000';
+console.log(`Front end proxies to: ${frontEndHost}`);
 app.all('/*', (req, res) => {
   // for frontend
-  apiProxy.web(req, res, { target: fronEndHost });
+  apiProxy.web(req, res, { target: frontEndHost });
 });
 
 appServer.listen(4000);
