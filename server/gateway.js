@@ -42,9 +42,9 @@ appServer.on('upgrade', (req, socket, head) => {
 
 const authServerHost = process.env.AUTH_SERVER_HOST || 'http://localhost:3002';
 console.log(`Auth service proxies to: ${authServerHost}`);
+// for auth
 app.all('/auth*', (req, res) => {
-  // for auth
-  console.log("Routing to Auth: ", req);
+  console.log("Routing to Auth: ", req.url);
   apiProxy.web(req, res, { target: authServerHost });
 });
 
@@ -56,4 +56,4 @@ app.all('/*', (req, res) => {
 });
 
 appServer.listen(4000);
-console.log('Gateway started');
+console.log('Gateway started\n\n');
