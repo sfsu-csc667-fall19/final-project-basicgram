@@ -68,7 +68,7 @@ class UserLibrary {
                 return;
             }
 
-            if (user.password === password) {
+            if (user && user.password === password) {
                 res.send({
                     userId: user._id,
                     token: user.token,
