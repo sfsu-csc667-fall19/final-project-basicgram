@@ -46,6 +46,10 @@ const useStyles = makeStyles(theme => ({
     submit: {
         margin: theme.spacing(3, 0, 2),
     },
+    icon: {
+        fontFamily: 'Satisfy, cursive',
+        marginBottom: theme.spacing(8)
+    }
 }));
 
 const SignUp = ({ registerUser, history, auth }) => {
@@ -70,17 +74,17 @@ const SignUp = ({ registerUser, history, auth }) => {
 
     if (auth.isAuthenticated) {
         history.push("/feed");
-      }
+    }
     return (
         <Grid container component="main" className={classes.root}>
             <CssBaseline />
             <Grid item xs={false} sm={4} md={8} className={classes.image} />
             <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} className={classes.container} square>
                 <div className={classes.paper}>
-                    <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h4">
+                    <Typography component="h1" variant="h3" className={classes.icon}>
+                        Story
+          </Typography>
+                    <Typography component="h1" variant="h5">
                         Sign Up
           </Typography>
                     <form className={classes.form} onSubmit={submit} noValidate>
