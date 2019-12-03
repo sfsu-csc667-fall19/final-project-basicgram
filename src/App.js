@@ -1,50 +1,37 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { connect } from 'react-redux';
-import { updateMessages, handlTextChange, submitMessage } from './redux/actions/messageActions';
-import './App.css';
+import { Switch, Route } from "react-router-dom";
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import setAuthToken from './utils/setAuthToken';
+import {setCurrentUser, logoutUser} from './redux/actions/authActions';
+import PrivateRoute from './PrivateRoute';
+import Feed from './pages/Feed';
 
-const Message = ({ data }) => (<div>{data}</div>);
 
-const App = ({ dispatch, text, messages }) => {
-  React.useEffect(() => {
-    axios.get('/basicgram/getMessages')
-      .then((res) => {
-        dispatch(updateMessages(res.data));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
-
-  const onSubmit = () => {
-    dispatch(submitMessage());
+const App = ({ dispatch }) => {
+  if (localStorage.token){
+    const token = localStorage.token;
+    setAuthToken(token);
+    dispatch(setCurrentUser(token))
   }
 
-  const handleTextChange = (e) => {
-    dispatch(handlTextChange(e.target.value));
-  }
   return (
     <div className="App">
-      <div>
-        <div className="message-area">
-          {messages.map((message, i) => <Message key={i} data={message} />)}
-        </div>
-      </div>
-      <div>
-        <input type="text" value={text} onChange={handleTextChange} />
-      </div>
-      <div>
-        <button onClick={onSubmit}>Submit</button>
-      </div>
+      <Switch>
+        <Route exact path="/" component={Login} /> 
+        <Route path="/login" component={Login} />
+        <Route path="/signup" component={SignUp} />
+        <PrivateRoute exact path="/feed" component={Feed} />
+      </Switch>
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
   return {
-    messages: state.messageReducer.messages,
-    text: state.messageReducer.text,
+    // messages: state.messageReducer.messages,
+    // text: state.messageReducer.text,
   };
 };
 
