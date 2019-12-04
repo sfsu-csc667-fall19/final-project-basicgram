@@ -82,7 +82,6 @@ class UserLibrary {
         }).catch(() => res.send({valid:false}))
     }
 
-    // TODO: Pass in res
     static editPassword(userId, oldPassword, newPassword, res) {
         this._getUserById(userId).then((user, error) => {
             if (error) {
