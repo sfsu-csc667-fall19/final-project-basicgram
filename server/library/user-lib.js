@@ -105,6 +105,22 @@ class UserLibrary {
         return User.findById(userId);
     }
 
+    static getUserInfo(userId, res) {
+        this._getUserById(userId).then((user, error) => {
+            if (error) {
+                console.log(error);
+                res.send({
+                    error,
+                });
+                return;
+            }
+
+            res.send({
+                user,
+            });
+        });
+    }
+
     static verifyUserToken(userId, token, res) {
         this._getUserById(userId).then((user, error) => {
             if (error) {

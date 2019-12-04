@@ -23,9 +23,20 @@ app.use(bodyParser());
 // TODO: Validate requests either here using express-validator or with custom validator library
 
 
-app.get('/user/:id', (req, res) => {
+/**
+ * GET user information based on userId
+ *
+ * @param userId of the user to get
+ */
+app.get('/user/:userId', (req, res) => {
     // TODO: RETURN USER INFO
-    console.log(req.params.id);
+    let userId = req.params.userId;
+    UserLib.getUserInfo(userId, res);
+});
+
+app.put('/user/:userId', (req, res) => {
+    // TODO: Edit user information based on request body
+    let userId = req.params.userId;
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
