@@ -41,4 +41,11 @@ app.put('/user/changePassword/:userId', (req, res) => {
     UserLib.editPassword(userId, oldPassword, newPassword, res);
 });
 
+app.put('/user/changeUsername/:userId', (req, res) => {
+    let userId = req.params.userId;
+    let newUsername = req.body.newUsername;
+
+    UserLib.editUsername(userId, newUsername, res);
+});
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

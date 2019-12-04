@@ -37,8 +37,7 @@ class UserLibrary {
         });
     };
 
-    // TODO: Pass in res
-    static editUsername(userId, username) {
+    static editUsername(userId, username, res) {
         const updatedUser = {
             username: username
         };
@@ -46,7 +45,7 @@ class UserLibrary {
         User.findByIdAndUpdate(userId, updatedUser, err => {
             if (err) throw err;
             else {
-                return {success: 'success'}
+                res.send({success: 'success'});
             }
         })
     };
