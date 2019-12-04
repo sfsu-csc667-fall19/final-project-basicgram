@@ -61,14 +61,14 @@ class UserLibrary {
     }
 
     static loginUser(username, password, res) {
-        this._getUserByUsername(username).then((error, user) => {
+        this._getUserByUsername(username).then((user, error) => {
             if (error) {
                 console.log(error);
                 res.send({error, });
                 return;
             }
 
-            if (user.password === password) {
+            if (user && user.password === password) {
                 res.send({
                     userId: user._id,
                     token: user.token,
@@ -82,18 +82,29 @@ class UserLibrary {
         }).catch(() => res.send({valid:false}))
     }
 
-    // TODO: Pass in res
-    static editPassword(userId, password) {
-        const updatedUser = {
-            password: password
-        };
-
-        User.findByIdAndUpdate(userId, updatedUser, err => {
-            if (err) throw err;
-            else {
-                return {success: 'success'}
+    static editPassword(userId, oldPassword, newPassword, res) {
+        this._getUserById(userId).then((user, error) => {
+            if (error) {
+                console.log(error);
+                res.send({error, });
+                return;
             }
-        })
+
+            if (user.password === oldPassword) {
+                const updatedUser = {
+                    password: newPassword
+                };
+
+                User.findByIdAndUpdate(userId, updatedUser, err => {
+                    if (err) throw err;
+                    else {
+                        res.send({success: 'success'});
+                    }
+                })
+            } else {
+                res.send({error: 'Password incorrect!'});
+            }
+        });
     };
 
     static _getUserByUsername(username) {
@@ -105,8 +116,24 @@ class UserLibrary {
         return User.findById(userId);
     }
 
+    static getUserInfo(userId, res) {
+        this._getUserById(userId).then((user, error) => {
+            if (error) {
+                console.log(error);
+                res.send({
+                    error,
+                });
+                return;
+            }
+
+            res.send({
+                user,
+            });
+        });
+    }
+
     static verifyUserToken(userId, token, res) {
-        this._getUserById(userId).then((error, user) => {
+        this._getUserById(userId).then((user, error) => {
             if (error) {
                 console.log(error);
                 res.send({
@@ -115,7 +142,7 @@ class UserLibrary {
             }
 
             let valid = false;
-            if (user.token == token) valid = true;
+            if (user && user.token === token) valid = true;
 
             if (res) {
                 res.send({
