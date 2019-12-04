@@ -11,7 +11,13 @@ var basicgramModel = new mongoose.Schema({
       ref: "User"
     },
     username: String
-  }
+  },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message"
+    }
+  ]
 });
 
 module.exports = mongoose.model("Basicgram", basicgramModel);

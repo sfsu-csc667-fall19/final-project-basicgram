@@ -49,7 +49,7 @@ app.post("/comments", function(req, res) {
           comment.author.id = req.user._id;
           comment.author.username = req.user.username;
           comment.save(); //Save comment to DB
-          //basicgram.comments.push(comment);
+          basicgram.comments.push(comment);
           basicgram.save();
           console.log("Comment Sent");
           console.log(comment);
