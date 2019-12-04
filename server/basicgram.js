@@ -58,7 +58,7 @@ mongoClient.connect(err => {
       req.body.basicgram.imageThumbnail =
         "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
         result.public_id;
-      req.body.listing.author = {
+      req.body.basicgram.author = {
         id: req.user._id,
         username: req.user.username
       };
