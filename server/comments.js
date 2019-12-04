@@ -4,7 +4,7 @@ const app = express();
 const mongoose = require("mongoose");
 const User = require("../models/user-model.js");
 const Basicgram = require("../models/basicgramModel");
-const Message = require("../models/message");
+const Comment = require("../models/comment");
 const ObjectId = mongoose.Types.ObjectId;
 
 const MONGODB_URI = "mongodb://localhost:27017/basicgram-database";
@@ -18,7 +18,7 @@ mongoose.connection.on("error", error => {
   console.log("ERROR: " + error);
 });
 
-// Shows message form
+// Shows comment form
 // TODO add auth
 app.get("/comments/new", function(req, res) {
   console.log(req.params.id);
@@ -33,7 +33,7 @@ app.get("/comments/new", function(req, res) {
   });
 });
 
-// CREATE message
+// CREATE comment
 // TODO add auth
 app.post("/comments", function(req, res) {
   Basicgram.findById(req.params.id, function(err, basicgram) {
@@ -41,20 +41,20 @@ app.post("/comments", function(req, res) {
       console.log(err);
       res.redirect("/basicgrams");
     } else {
-      Message.create(req.body.message, function(err, message) {
+      Comment.create(req.body.comment, function(err, comment) {
         if (err) {
           console.log(err);
         } else {
-          //Attach id and username to message
-          message.author.id = req.user._id;
-          message.author.username = req.user.username;
-          message.save(); //Save message to DB
-          //basicgram.messages.push(message);
+          //Attach id and username to comment
+          comment.author.id = req.user._id;
+          comment.author.username = req.user.username;
+          comment.save(); //Save comment to DB
+          //basicgram.comments.push(comment);
           basicgram.save();
-          console.log("Message Sent");
-          console.log(message);
+          console.log("Comment Sent");
+          console.log(comment);
           console.log(" ");
-          req.flash("success", "Your message has been sent!");
+          req.flash("success", "Your comment has been sent!");
           res.redirect("/basicgrams/" + basicgram._id);
         }
       });
