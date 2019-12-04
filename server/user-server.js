@@ -34,9 +34,13 @@ app.get('/user/:userId', (req, res) => {
     UserLib.getUserInfo(userId, res);
 });
 
-app.put('/user/:userId', (req, res) => {
+app.put('/user/changePassword/:userId', (req, res) => {
     // TODO: Edit user information based on request body
     let userId = req.params.userId;
+    let oldPassword = req.body.oldPassword;
+    let newPassword = req.body.newPassword;
+
+    UserLib.editPassword(userId, oldPassword, newPassword, res);
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
