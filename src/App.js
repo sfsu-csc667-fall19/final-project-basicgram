@@ -7,6 +7,7 @@ import setAuthToken from './utils/setAuthToken';
 import {setCurrentUser, logoutUser} from './redux/actions/authActions';
 import PrivateRoute from './PrivateRoute';
 import Feed from './pages/Feed';
+import Profile from './pages/Profile'
 
 
 const App = ({ dispatch }) => {
@@ -23,6 +24,7 @@ const App = ({ dispatch }) => {
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
         <PrivateRoute exact path="/feed" component={Feed} />
+        <PrivateRoute exact path="/profile" component={Profile} />
       </Switch>
     </div>
   );
