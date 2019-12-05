@@ -6,7 +6,6 @@ const client = redis.createClient({
   host: process.env.REDIS_HOST || "localhost"
 });
 const app = express();
-var router = express.Router();
 // var middleware = require("../middleware");
 var multer = require("multer");
 var storage = multer.diskStorage({
@@ -33,7 +32,7 @@ cloudinary.config({
 
 const { MongoClient, ObjectID } = require("mongodb");
 const url = process.env.MONGO_HOST || "mongodb://localhost:27017";
-const dbName = "basicgram";
+const dbName = "basicgram-database";
 const mongoClient = new MongoClient(url);
 
 //INDEX - show all basicgrams or basicgrams of search result
@@ -49,19 +48,20 @@ mongoClient.connect(err => {
   // create collection. If already exists, ignores by default
   const collection = db.collection("basicgrams", function(err, collection) {});
 
-  app.post("/basicgrams", upload.single("image"), function(
-    //router.post("/", middleware.isLoggedIn, upload.single("image"), function(
-    req,
-    res
-  ) {
-    // get data from form and add to basicgrams array
-    cloudinary.uploader.upload(req.file.path, function(result) {
-      // add cloudinary url for the image to the basicgram object under image property
+  app.post("/basicgrams", upload.single("image"), function(req, res) {
+    cloudinary.uploader.upload(req.file.path, function(err, result) {
+      if (err) {
+        req.flash("image upload error", err.message);
+        return res.redirect("back");
+      }
       req.body.basicgram.image = result.secure_url; // see cloudinary npm doc
-      //generate a link to thumbnail version of the uploaded photo, crop type, height and width can be changed here
       req.body.basicgram.imageThumbnail =
         "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
         result.public_id;
+      req.body.basicgram.author = {
+        id: req.user._id,
+        username: req.user.username
+      };
       let body = req.body.basicgram;
 
       if (!body) {
@@ -111,23 +111,23 @@ mongoClient.connect(err => {
       });
   });
 
-  //TODO
-  //NEW route "/basicgrams/new". GET method. Displays form to make a new basicgram.
-  router.get("/new", function(req, res) {});
-
-  //SHOW route "/basicgrams/:id". Shows details page about one basicgram with certain id
-  router.get("/:id", function(req, res) {});
-
-  //SHOW route "/basicgrams/:id/edit". Display the page to edit basicgram.
-  router.get("/:id/edit", function(req, res) {});
-
-  //UPDATE route "/basicgrams/:id". Update the basicgram identified by id.
-  router.put("/:id", function(req, res) {});
-
-  //DESTROY route "/basicgrams/:id". Delete the basicgram then redirect.
-  router.delete("/:id", function(req, res) {});
-
   app.listen(5000);
+});
+
+app.get("basicgrams/new", function(req, res) {});
+
+app.get("basicgrams/:id", function(req, res) {
+  Basicgram.findById(req.params.id).exec(function(err, foundBasicgram) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(foundBasicgram);
+      res.send({
+        basicgram: foundBasicgram,
+        commentsFound: [] // TODO add comments query
+      });
+    }
+  });
 });
 
 // monogo init
