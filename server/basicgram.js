@@ -1,168 +1,90 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-// const { MongoClient } = require("mongodb");
+const cookieParser = require('cookie-parser');
 const redis = require("redis");
-const client = redis.createClient({
-  host: process.env.REDIS_HOST || "localhost"
+
+// mongoosey stuff
+const { MongoClient, ObjectID } = require("mongodb");
+const mongoose = require('mongoose');
+const BasicgramsLib = require('./library/posts-lib.js');
+
+const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
+mongoose.connection.on('connected', () => {
+    console.log("Connected to MongoDB");
 });
-const app = express();
-// var middleware = require("../middleware");
-var multer = require("multer");
-var storage = multer.diskStorage({
-  filename: function(req, file, callback) {
+mongoose.connection.on('error', (error) => {
+    console.log("ERROR: " + error);
+});
+// mongoosey stuff
+
+// *** image stuff ***
+let multer = require("multer");
+let storage = multer.diskStorage({
+  filename: (req, file, callback) => {
     callback(null, Date.now() + file.originalname);
   }
 });
-
-var imageFilter = function(req, file, cb) {
+let imageFilter = (req, file, cb) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
     return cb(new Error("jpg, jpeg, png, or gif format only"), false);
   }
   cb(null, true);
 };
-
-var upload = multer({ storage: storage, fileFilter: imageFilter });
-
-var cloudinary = require("cloudinary");
+let upload = multer({ storage: storage, fileFilter: imageFilter });
+let cloudinary = require("cloudinary");
 cloudinary.config({
   cloud_name: "dzjtqbbua",
   api_key: "559561864892248",
   api_secret: "n1jUnMK_r3B3hGuVIHasS7kHj1Y"
 });
+// *** image stuff ***
 
-const { MongoClient, ObjectID } = require("mongodb");
-const url = process.env.MONGO_HOST || "mongodb://localhost:27017";
-const dbName = "basicgram-database";
-const mongoClient = new MongoClient(url);
+// express app stuff 
+const app = express();
+app.use(cookieParser());
+app.use(bodyParser());
 
-//INDEX - show all basicgrams or basicgrams of search result
-mongoClient.connect(err => {
-  if (err) {
-    console.log(err);
-    process.exit(1);
-  }
-
-  console.log("Connected successfully to db");
-  const db = mongoClient.db(dbName);
-
-  // create collection. If already exists, ignores by default
-  const collection = db.collection("basicgrams", function(err, collection) {});
-
-  app.post("/basicgrams", upload.single("image"), function(req, res) {
-    cloudinary.uploader.upload(req.file.path, function(err, result) {
-      if (err) {
-        req.flash("image upload error", err.message);
-        return res.redirect("back");
-      }
-      req.body.basicgram.image = result.secure_url; // see cloudinary npm doc
-      req.body.basicgram.imageThumbnail =
-        "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
-        result.public_id;
-      req.body.basicgram.author = {
-        id: req.user._id,
-        username: req.user.username
-      };
-      let body = req.body.basicgram;
-
-      if (!body) {
-        return res.send({
-          status: false
-        });
-      }
-      const document = { body };
-      collection
-        .insertOne(document)
-        .then(response => {
-          if (response) {
-            console.log("New basicgram added");
-            return res.redirect("/basicgrams");
-          } else {
-            return res.send({
-              status: false
-            });
-          }
-        })
-        .catch(e => {
-          console.log(e.message);
-          return res.send({
-            status: false
-          });
-        });
-    });
-  });
-
-  app.get("/basicgrams", function(req, res) {
-    db.collection("basicgrams")
-      .find({})
-      .toArray()
-      .then(allbasicgrams => {
-        console.log(allbasicgrams);
-        console.log("Succesfully got allbasicgrams");
-        allbasicgrams = allbasicgrams || []; // some checking
-        res.send({
-          basicgrams: allbasicgrams
-        });
-      })
-      .catch(e => {
-        console.log(e.message);
-        res.send({
-          status: false
-        });
-      });
-  });
-
-  app.listen(5000);
-});
-
-app.get("basicgrams/new", function(req, res) {});
-
-app.get("basicgrams/:id", function(req, res) {
-  Basicgram.findById(req.params.id).exec(function(err, foundBasicgram) {
+const PORT = 5000;
+app.post("/basicgrams/new", upload.single("image"), (req, res) => {
+  cloudinary.uploader.upload(req.file.path, (result, err) => {
     if (err) {
-      console.log(err);
-    } else {
-      console.log(foundBasicgram);
-      res.send({
-        basicgram: foundBasicgram,
-        commentsFound: [] // TODO add comments query
+      console.log("Image upload error...", err)
+      return res.send({
+        err
       });
     }
+
+    const author = req.cookies.userId;
+    const caption = req.body.caption;
+    const image = result.secure_url;
+    const imageThumbnail = "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
+    result.public_id;
+
+    BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, res);
+
   });
 });
 
-// monogo init
-// const url = process.env.MONGO_HOST || "mongodb://localhost:27017";
-// const mongoClient = new MongoClient(url);
+// get all posts
+app.get("/basicgrams", (req, res) => {
+  BasicgramsLib.getAllBasicgrams(res);
+});
 
-// mongoClient.connect(err => {
-//   if (err) console.log(err);
-//   const db = mongoClient.db("test101");
-//   // move app logic in here
-//   const app = express();
-//   app.use(bodyParser.json());
-//   // sorry for spelling wrong :(
-//   app.post("/basicgram/postMessage", (req, res) => {
-//     console.log(req.body);
-//     db.collection("test")
-//       .insertOne({ data: req.body.message })
-//       .then(() => console.log("db insert worked"))
-//       .catch(e => console.log(e));
-//     client.publish("testPublish", req.body.message);
-//     res.send("ok");
-//   });
+// get post by basicgram id
+app.get("/basicgrams/:id", (req, res) => {
+  const basicgramId = req.params.id;
 
-//   app.get("/basicgram/getMessages", (req, res) => {
-//     db.collection("test")
-//       .find({})
-//       .toArray()
-//       .then(result => {
-//         res.send(result.map(r => r.data));
-//       })
-//       .catch(e => console.log(e));
-//   });
+  BasicgramsLib.getBasicgramById(basicgramId, res);
+});
 
-//   app.listen(5000);
-//   // end app logic
-// });
+// get post by user id
+app.get("/basicgrams/user/:id", (req, res) => {
+  const userId =  req.params.id;
 
-// module.exports = router;
+  BasicgramsLib.getBasicgramsByUser(userId, res);
+});
+
+app.listen(PORT);
+
+// /express app stuff 

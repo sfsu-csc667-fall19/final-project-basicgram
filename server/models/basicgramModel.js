@@ -1,16 +1,13 @@
 var mongoose = require("mongoose");
 
 var basicgramModel = new mongoose.Schema({
-  name: String,
+  caption: String,
   image: String,
   imageThumbnail: String,
   createdAt: { type: Date, default: Date.now },
   author: {
-    id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    },
-    username: String
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
   },
   comments: [
     {

@@ -1,81 +1,89 @@
 const mongoose = require('mongoose');
-
-const Post = require('../models/post-model.js');
-
+const Basicgram = require('../models/basicgramModel.js');
 const ObjectId = mongoose.Types.ObjectId;
 
-/*
-const MONGODB_URI = 'mongodb://localhost:27017/667Database';
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
-mongoose.connection.on('connected', () => {
-    console.log("Connected to MongoDB");
-});
-mongoose.connection.on('error', (error) => {
-    console.log("ERROR: " + error);
-});
-*/
 
-
-class NotesLibrary {
-    // TODO: How do we handle image upload/post?
-    static createPost(created_by, caption, image, ws) {
-        const newNote = new Note({
-            body: body,
-            created_at: new Date(),
-            created_by: new ObjectId(userId)
+class BasicgramsLibrary {
+    // returns {caption, image, imageThumbnail, createdAt, author, comments, _id}
+    static createBasicgram(author, caption, image, imageThumbnail, res) {
+        const newBasicgram = new Basicgram({
+            caption,
+            image,
+            imageThumbnail,
+            author: new ObjectId(author),
+            createdAt: new Date(),
+            comments: []
         });
 
-        newNote.save((err) => {
-            if (err) throw err;
-            else {
-                ws.send("Success!");
+        console.log(author);
+
+        newBasicgram.save((err) => {
+            if (err) {
+                console.log(err.name);
+                res.send({
+                    err
+                });
+
+                return;
             }
+        
+            res.send({
+                newBasicgram
+            });
         });
     };
+    // returns { basicgrams: [array of posts]}
+    static getAllBasicgrams(res) {
+        // TODO: Cache redis?
+        Basicgram.find({}, (err, basicgrams) => {
+            if ( err ) {
+                console.log('Could not get all basicgrams', err.name);
 
-    static editNote(noteId, body, ws) {
-        const updatedNote = {
-            body: body
-        };
+                res.send({
+                    err
+                });
 
-        Note.findByIdAndUpdate(noteId, updatedNote, err => {
-            if (err) throw err;
-            else {
-                ws.send("Success!");
+                return
             }
-        })
-    };
 
-    static getNoteById(noteId, ws) {
-        Note.findById(noteId, function(err, note) {
-            if (err) throw err;
-            ws.send(JSON.stringify(note));
+            res.send({
+                basicgrams
+            });
         });
     }
-
-    static getNoteByUser(userId, ws) {
-        Note.find({ user_id: new ObjectId(userId) }, function(err, notes) {
-            if (err) throw err;
-            ws.send(JSON.stringify(notes));
+    // returns {basicgram: basicgram}
+    static getBasicgramById(postId, res) {
+        Basicgram.findById(postId).then((err, basicgram) => {
+            if ( err ) {
+                console.log(err);
+                res.send({
+                    err
+                });
+                return ;
+            }
+            res.send({
+                basicgram
+            });
         });
     }
+    // returns {basicgrams: [user's basicgrams]}
+    static getBasicgramsByUser(author, res) {
+        Basicgram.find({author}, (err, basicgrams) => {
+            if ( err ) {
+                console.log(`Could not get ${author}'s basicgrams`, err.name);
 
-    static getAllNotes(ws) {
-        Note.find({}, function(err, notes) {
-            if (err) throw err;
-            ws.send(JSON.stringify({
-                type: 'GET_ALL_NOTES',
-                notes: notes
-            }));
-        });
-    }
+                res.send({
+                    err
+                });
 
-    static verifyRequest(cookies) {
-        return axios.post('/auth/verify', {
-            token: cookies.token,
-            userId: cookies.userId
+                return
+            }
+
+            res.send({
+                basicgrams
+            });
         });
     }
 }
 
-module.exports = NotesLibrary;
+module.exports = BasicgramsLibrary;
