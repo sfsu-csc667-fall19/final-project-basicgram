@@ -1,38 +1,145 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const { MongoClient } = require('mongodb');
-const redis = require('redis');
-const client = redis.createClient({ host: process.env.REDIS_HOST || 'localhost' });
+const express = require("express");
+const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
+const axios = require('axios');
+// redis stuff
+const redis = require("redis");
+const redisClient = redis.createClient();
+// redis stuff
 
-// monogo init
-const url = process.env.MONGO_HOST || 'mongodb://localhost:27017';
-const mongoClient = new MongoClient(url);
+// mongoosey stuff
+const { MongoClient, ObjectID } = require("mongodb");
+const mongoose = require('mongoose');
+const BasicgramsLib = require('./library/posts-lib.js');
 
-mongoClient.connect((err) => {
-  if (err) console.log(err);
-  const db = mongoClient.db('test101');
-  // move app logic in here
-  const app = express();
-  app.use(bodyParser.json());
-  // sorry for spelling wrong :(
-  app.post('/basicgram/postMessage', (req, res) => {
-    console.log(req.body);
-    db.collection('test').insertOne({ data: req.body.message })
-      .then(() => console.log('db insert worked'))
-      .catch((e) => console.log(e));
-    client.publish('testPublish', req.body.message);
-    res.send('ok');
+const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
+mongoose.connection.on('connected', () => {
+    console.log("Connected to MongoDB");
+});
+mongoose.connection.on('error', (error) => {
+    console.log("ERROR: " + error);
+});
+// mongoosey stuff
+
+// *** image stuff ***
+let multer = require("multer");
+let storage = multer.diskStorage({
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + file.originalname);
+  }
+});
+let imageFilter = (req, file, cb) => {
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+    return cb(new Error("jpg, jpeg, png, or gif format only"), false);
+  }
+  cb(null, true);
+};
+let upload = multer({ storage: storage, fileFilter: imageFilter });
+let cloudinary = require("cloudinary");
+cloudinary.config({
+  cloud_name: "dzjtqbbua",
+  api_key: "559561864892248",
+  api_secret: "n1jUnMK_r3B3hGuVIHasS7kHj1Y"
+});
+// *** image stuff ***
+
+// express app stuff 
+const app = express();
+app.use(cookieParser());
+app.use(bodyParser());
+app.use((req, res, next) => {
+  // TODO: Pull from body or cookies!?
+  const token = req.cookies.token;
+  const userId = req.cookies.userId;
+  const body = {
+      token,
+      userId
+  };
+
+  redisClient.get(token, (err, cachedValue) => {
+      console.log(err);
+
+      if ( cachedValue ) {
+          console.log('Cache hit!', cachedValue);
+          if ( cachedValue === 'true' ) {
+              console.log(cachedValue);
+              return next();
+          } else {
+              res.status(403);
+              return res.send({
+                  status: false
+              });
+          }
+      } else {
+          axios
+          .post('http://localhost:4000/auth/verify', body)
+          .then(response => {
+            console.log(response);
+              if ( response.data && response.data.valid ) {
+                console.log(response);
+                  redisClient.set(token, true);
+                  return next();
+              } else {
+                  redisClient.set(token, false);
+                  res.status(403);
+                  return res.send({
+                      status: false
+                  });
+              }
+          })
+          .catch((e) => {
+              console.log(e);
+              res.status(404);
+              return res.send({
+                  status: false
+              });
+          })
+      }
   });
-
-  app.get('/basicgram/getMessages', (req, res) => {
-    db.collection('test').find({}).toArray()
-      .then((result) => {
-        res.send(result.map(r => r.data));
-      })
-      .catch((e) => console.log(e));
-  });
-
-  app.listen(5000);
-  // end app logic
 });
 
+const PORT = 5000;
+// create new post
+app.post("/basicgrams/new", upload.single("image"), (req, res) => {
+  cloudinary.uploader.upload(req.file.path, (result, err) => {
+    if (err) {
+      console.log("Image upload error...", err)
+      return res.send({
+        err
+      });
+    }
+
+    const author = req.cookies.userId; // if no author given, pulls from userId? Desired???
+    const caption = req.body.caption;
+    const image = result.secure_url;
+    const imageThumbnail = "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
+    result.public_id;
+
+    BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, res);
+
+  });
+});
+
+// get all posts
+app.get("/basicgrams", (req, res) => {
+  BasicgramsLib.getAllBasicgrams(res);
+});
+
+// get post by basicgram id
+app.get("/basicgrams/:id", (req, res) => {
+  const basicgramId = req.params.id;
+
+  BasicgramsLib.getBasicgramById(basicgramId, res);
+});
+
+// get post by user id
+app.get("/basicgrams/user/:id", (req, res) => {
+  const userId = req.params.id;
+
+  BasicgramsLib.getBasicgramsByUser(userId, res);
+});
+
+app.listen(PORT);
+
+// /express app stuff 
