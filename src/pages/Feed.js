@@ -22,6 +22,7 @@ import Fab from '@material-ui/core/Fab';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import PersonRoundedIcon from '@material-ui/icons/PersonRounded';
 import AddIcon from '@material-ui/icons/Add';
+import axios from 'axios';
 
 
 const useStyles = makeStyles(theme => ({
@@ -116,11 +117,65 @@ const featuredPosts = [
         description: 'Hello World',
     },
 ];
-
-
+// Courtesy of stack over flow :D
+const getCook = (cookiename) => {
+    // Get name followed by anything except a semicolon
+    let cookiestring=RegExp(""+cookiename+"[^;]+").exec(document.cookie);
+    // Return everything after the equal sign, or an empty string if the cookie name not found
+    return decodeURIComponent(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,"") : "");
+}
 
 const Feed = ({ logoutUser, auth }) => {
+
     const classes = useStyles();
+
+    const [posts, setPosts] = React.useState([]);
+
+    const setNewPosts = (newPosts) => {
+        setPosts(newPosts);
+        console.log(newPosts);
+        // Use reducer action here for all posts
+    };
+
+    const getAllPosts = () => {
+        axios
+        .get('/basicgrams')
+        .then(res => {
+            if ( res.data.basicgrams ) {
+                setNewPosts(res.data.basicgrams);
+            } else {
+                // some error
+                throw new Error("Error getting all posts");
+            }
+        })
+        .catch((e) => {
+            // redirect login here?
+            console.log("Could not get all posts");
+        }); 
+    };
+
+    const getUserPosts = (userId) => {
+        axios
+        .get(`/basicgrams/user/${userId}`)
+        .then(res => {
+            if ( res.data.basicgrams ) {
+                console.log(res.data.basicgrams);
+            } else {
+                // some error
+                throw new Error(`Error getting all ${userId}'s posts`);
+            }
+        })
+        .catch((e) => {
+            // redirect login here?
+            console.log(`Could not get all ${userId}'s posts`);
+        }); 
+    }
+
+    // TODO: Pull posts from redux?
+    React.useEffect(() => {
+        getAllPosts();
+        getUserPosts(getCook('userId'));
+    }, []);
 
     const onLogoutClick = e => {
         e.preventDefault();
@@ -146,26 +201,26 @@ const Feed = ({ logoutUser, auth }) => {
             <Container className={classes.container} maxWidth="sm">
                     {/* posts */}
                     <Grid container spacing={3}>
-                        {featuredPosts.map(post => (
-                            <Grid item key={post.title} className={classes.mainGrid} xs={12} md={12}>
+                        {posts.map(post => (
+                            <Grid item key={post._id} className={classes.mainGrid} xs={12} md={12}>
                                 <Card className={classes.card}>
                                     <CardActionArea>
-                                        <CardContent>
+                                        {/* <CardContent>
                                             <Typography component="subtitle1" variant="subtitle1">
                                                 <b>{post.title}</b>
                                             </Typography>
-                                        </CardContent>
+                                        </CardContent> */}
                                         <CardMedia
                                             className={classes.media}
-                                            image="https://source.unsplash.com/random"
+                                            image={post.image}
                                             title="Image title"
                                         />
                                         <CardContent>
                                             <Typography component="subtitle2" variant="subtitle2">
-                                                <b>{post.title}</b> {post.description}
+                                                {post.caption}
                                             </Typography>
                                             <Typography component="p" variant="p" color="textSecondary">
-                                                {post.time}
+                                                {post.createdAt}
                                             </Typography>
                                         </CardContent>
                                     </CardActionArea>

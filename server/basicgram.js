@@ -1,7 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const axios = require('axios');
+// redis stuff
 const redis = require("redis");
+const redisClient = redis.createClient();
+// redis stuff
 
 // mongoosey stuff
 const { MongoClient, ObjectID } = require("mongodb");
@@ -44,8 +48,59 @@ cloudinary.config({
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser());
+app.use((req, res, next) => {
+  // TODO: Pull from body or cookies!?
+  const token = req.cookies.token;
+  const userId = req.cookies.userId;
+  const body = {
+      token,
+      userId
+  };
+
+  redisClient.get(token, (err, cachedValue) => {
+      console.log(err);
+
+      if ( cachedValue ) {
+          console.log('Cache hit!', cachedValue);
+          if ( cachedValue === 'true' ) {
+              console.log(cachedValue);
+              return next();
+          } else {
+              res.status(403);
+              return res.send({
+                  status: false
+              });
+          }
+      } else {
+          axios
+          .post('http://localhost:4000/auth/verify', body)
+          .then(response => {
+            console.log(response);
+              if ( response.data && response.data.valid ) {
+                console.log(response);
+                  redisClient.set(token, true);
+                  return next();
+              } else {
+                  redisClient.set(token, false);
+                  res.status(403);
+                  return res.send({
+                      status: false
+                  });
+              }
+          })
+          .catch((e) => {
+              console.log(e);
+              res.status(404);
+              return res.send({
+                  status: false
+              });
+          })
+      }
+  });
+});
 
 const PORT = 5000;
+// create new post
 app.post("/basicgrams/new", upload.single("image"), (req, res) => {
   cloudinary.uploader.upload(req.file.path, (result, err) => {
     if (err) {
@@ -55,7 +110,7 @@ app.post("/basicgrams/new", upload.single("image"), (req, res) => {
       });
     }
 
-    const author = req.cookies.userId;
+    const author = req.cookies.userId; // if no author given, pulls from userId? Desired???
     const caption = req.body.caption;
     const image = result.secure_url;
     const imageThumbnail = "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
@@ -80,7 +135,7 @@ app.get("/basicgrams/:id", (req, res) => {
 
 // get post by user id
 app.get("/basicgrams/user/:id", (req, res) => {
-  const userId =  req.params.id;
+  const userId = req.params.id;
 
   BasicgramsLib.getBasicgramsByUser(userId, res);
 });
