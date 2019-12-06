@@ -2,39 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
-import { Toolbar, IconButton,  AppBar, Grid, Container, Fab } from '@material-ui/core'
+import { Grid, Container } from '@material-ui/core'
 import { logoutUser } from '../redux/actions/authActions';
-import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
-import PersonRoundedIcon from '@material-ui/icons/PersonRounded';
-import AddIcon from '@material-ui/icons/Add';
 import TopAppBar from '../components/TopAppBar';
 import FeedCard from '../components/FeedCard';
+import BottomAppBar from "../components/BottomAppBar";
 
 const useStyles = makeStyles(theme => ({
     container: {
         marginTop: theme.spacing(10),
         marginBottom: theme.spacing(10),
-    },
-    appBar: {
-        background: '#fff',
-        color: '#000'
-    },
-    appBarBottom: {
-        background: '#fff',
-        color: '#000',
-        top: 'auto',
-        bottom: 0,
-    },
-    grow: {
-        flexGrow: 1,
-    },
-    fabButton: {
-        position: 'absolute',
-        zIndex: 1,
-        top: -30,
-        left: 0,
-        right: 0,
-        margin: '0 auto',
     },
 }));
 
@@ -91,6 +68,7 @@ const Feed = ({ logoutUser, history }) => {
         history.push("/feed/post")
     }
 
+
     return (
         <React.Fragment>
             <TopAppBar onLogoutClick={onLogoutClick} />
@@ -103,22 +81,7 @@ const Feed = ({ logoutUser, history }) => {
                 </Grid>
                 {/* End sub featured posts */}
             </Container>
-            <AppBar position="fixed" color="primary" className={classes.appBarBottom}>
-                <Container maxWidth="sm">
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit">
-                            <HomeRoundedIcon />
-                        </IconButton>
-                        <Fab color="primary" aria-label="add" className={classes.fabButton}>
-                            <AddIcon />
-                        </Fab>
-                        <div className={classes.grow} />
-                        <IconButton edge="end" color="inherit">
-                            <PersonRoundedIcon />
-                        </IconButton>
-                    </Toolbar>
-                </Container>
-            </AppBar>
+            <BottomAppBar />
         </React.Fragment>
     );
 }
