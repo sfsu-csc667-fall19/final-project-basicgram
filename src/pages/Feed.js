@@ -7,6 +7,9 @@ import { logoutUser } from '../redux/actions/authActions';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import PersonRoundedIcon from '@material-ui/icons/PersonRounded';
 import AddIcon from '@material-ui/icons/Add';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+
 import TopAppBar from '../components/TopAppBar';
 import FeedCard from '../components/FeedCard';
 
@@ -76,11 +79,64 @@ const featuredPosts = [
         ]
     },
 ];
-
-
+// Courtesy of stack over flow :D
+const getCook = (cookiename) => {
+    // Get name followed by anything except a semicolon
+    let cookiestring=RegExp(""+cookiename+"[^;]+").exec(document.cookie);
+    // Return everything after the equal sign, or an empty string if the cookie name not found
+    return decodeURIComponent(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,"") : "");
+}
 
 const Feed = ({ logoutUser, history }) => {
     const classes = useStyles();
+
+    const [posts, setPosts] = React.useState([]);
+
+    const setNewPosts = (newPosts) => {
+        setPosts(newPosts);
+        console.log(newPosts);
+        // Use reducer action here for all posts
+    };
+
+    const getAllPosts = () => {
+        axios
+        .get('/basicgrams')
+        .then(res => {
+            if ( res.data.basicgrams ) {
+                setNewPosts(res.data.basicgrams);
+            } else {
+                // some error
+                throw new Error("Error getting all posts");
+            }
+        })
+        .catch((e) => {
+            // redirect login here?
+            console.log("Could not get all posts");
+        }); 
+    };
+
+    const getUserPosts = (userId) => {
+        axios
+        .get(`/basicgrams/user/${userId}`)
+        .then(res => {
+            if ( res.data.basicgrams ) {
+                console.log(res.data.basicgrams);
+            } else {
+                // some error
+                throw new Error(`Error getting all ${userId}'s posts`);
+            }
+        })
+        .catch((e) => {
+            // redirect login here?
+            console.log(`Could not get all ${userId}'s posts`);
+        }); 
+    }
+
+    // TODO: Pull posts from redux?
+    React.useEffect(() => {
+        getAllPosts();
+        getUserPosts(getCook('userId'));
+    }, []);
 
     const onLogoutClick = e => {
         e.preventDefault();
@@ -98,7 +154,7 @@ const Feed = ({ logoutUser, history }) => {
             <Container className={classes.container} maxWidth="sm">
                 {/* posts */}
                 <Grid container spacing={3}>
-                    {featuredPosts.map(post => (
+                    {posts.map(post => (
                         <FeedCard post={post} onClickPost={onClickPost}  />
                     ))}
                 </Grid>

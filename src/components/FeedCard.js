@@ -32,22 +32,17 @@ export default function FeedCard(props) {
     <Grid item className={classes.mainGrid} xs={12} md={12}>
       <Card className={classes.card} elevation={3}>
         <CardActionArea onClick={props.onClickPost}>
-          <CardContent>
-            <Typography component="subtitle1" variant="subtitle1">
-              <b>{props.post.title}</b>
-            </Typography>
-          </CardContent>
           <CardMedia
             className={classes.media}
-            image="https://source.unsplash.com/random"
+            image={props.post.image}
             title="Image title"
           />
           <CardContent>
             <Typography component="subtitle2" variant="subtitle2">
-              <b>{props.post.title}</b> {props.post.description}
+              {props.post.caption}
             </Typography>
             <Typography component="p" variant="p" color="textSecondary">
-              {props.post.time}
+              {props.post.date}
             </Typography>
           </CardContent>
         </CardActionArea>
