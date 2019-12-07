@@ -8,9 +8,12 @@ const redisClient = redis.createClient();
 // redis stuff
 
 // mongoosey stuff
-const { MongoClient, ObjectID } = require("mongodb");
 const mongoose = require('mongoose');
 const BasicgramsLib = require('./library/posts-lib.js');
+const CommentsLib = require('./library/comments-lib.js');
+require('./models/user-model.js');
+require('./models/basicgramModel.js');
+require('./models/commentModel.js');
 
 const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
@@ -48,8 +51,8 @@ cloudinary.config({
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser());
+// Middleware caches token auth result
 app.use((req, res, next) => {
-  // TODO: Pull from body or cookies!?
   const token = req.cookies.token;
   const userId = req.cookies.userId;
   const body = {
@@ -61,45 +64,44 @@ app.use((req, res, next) => {
       console.log(err);
 
       if ( cachedValue ) {
-          console.log('Cache hit!', cachedValue);
-          if ( cachedValue === 'true' ) {
-              console.log(cachedValue);
-              return next();
-          } else {
-              res.status(403);
-              return res.send({
-                  status: false
-              });
-          }
+        console.log('Cache hit!', cachedValue);
+        if ( cachedValue === 'true' ) {
+          console.log(cachedValue);
+          return next();
+        } else {
+          res.status(403);
+          return res.send({
+            valid: false
+          });
+        }
       } else {
-          axios
-          .post('http://localhost:4000/auth/verify', body)
-          .then(response => {
+        axios
+        .post('http://localhost:4000/auth/verify', body)
+        .then(response => {
+          console.log(response);
+          if ( response.data && response.data.valid ) {
             console.log(response);
-              if ( response.data && response.data.valid ) {
-                console.log(response);
-                  redisClient.set(token, true);
-                  return next();
-              } else {
-                  redisClient.set(token, false);
-                  res.status(403);
-                  return res.send({
-                      status: false
-                  });
-              }
-          })
-          .catch((e) => {
-              console.log(e);
-              res.status(404);
-              return res.send({
-                  status: false
-              });
-          })
+            redisClient.set(token, true);
+            return next();
+          } else {
+            redisClient.set(token, false);
+            res.status(403);
+            return res.send({
+              valid: false
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          res.status(404);
+          return res.send({
+            valid: false
+          });
+        });
       }
   });
 });
 
-const PORT = 5000;
 // create new post
 app.post("/basicgrams/new", upload.single("image"), (req, res) => {
   cloudinary.uploader.upload(req.file.path, (result, err) => {
@@ -110,14 +112,14 @@ app.post("/basicgrams/new", upload.single("image"), (req, res) => {
       });
     }
 
-    const author = req.cookies.userId; // if no author given, pulls from userId? Desired???
-    const caption = req.body.caption;
+    const author = req.cookies.userId;
+    const caption = req.body.caption || '';
     const image = result.secure_url;
     const imageThumbnail = "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
     result.public_id;
 
+    // get author name and username
     BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, res);
-
   });
 });
 
@@ -140,6 +142,31 @@ app.get("/basicgrams/user/:id", (req, res) => {
   BasicgramsLib.getBasicgramsByUser(userId, res);
 });
 
+// Comment endpoints
+// create new comment
+app.post("/basicgrams/comment/new", (req, res) => {
+  const author = req.cookies.userId;
+  const post = req.body.postId;
+  const text = req.body.text;
+
+  CommentsLib.createComment(author, post, text, res);
+});
+
+// find comment by Id
+app.get("/basicgrams/comment/:id", (req, res) => {
+  const commentId = req.params.id;
+
+  CommentsLib.getCommentById(commentId, res);
+});
+
+// find comments by post
+app.get("/basicgrams/comment/post/:id", (req, res) => {
+  const postId = req.params.id;
+
+  CommentsLib.getCommentsByPost(postId, res);
+});
+
+const PORT = 5000;
 app.listen(PORT);
 
 // /express app stuff 

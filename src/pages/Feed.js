@@ -126,11 +126,55 @@ const Feed = ({ logoutUser, history }) => {
                 throw new Error(`Error getting all ${userId}'s posts`);
             }
         })
+        .then(() => {
+            makeNewComment("blahblahblah");// test
+        })
+        .then(() => {
+            getCommentsByPost("5de8b38c6064fe3df299f88c"); //test
+        })
         .catch((e) => {
             // redirect login here?
             console.log(`Could not get all ${userId}'s posts`);
         }); 
     }
+
+    const makeNewComment = (text) => {
+        const body = {
+            text,
+            postId: "5de8b38c6064fe3df299f88c"
+        };
+        axios
+        .post(`/basicgrams/comment/new`, body)
+        .then(res => {
+            if ( res.data && res.data.comment ) {
+                console.log(res.data.comment);
+            } else {
+                // some error
+                throw new Error(`Error making new comment`);
+            }
+        })
+        .catch((e) => {
+            // redirect login here?
+            console.log(`Could not make new comment`);
+        }); 
+    };
+
+    const getCommentsByPost = (postId) => {
+        axios
+        .get(`/basicgrams/comment/post/${postId}`)
+        .then(res => {
+            if ( res.data && res.data.comments ) {
+                console.log(res.data.comments);
+            } else {
+                // some error
+                throw new Error(`Error getting comments by post`);
+            }
+        })
+        .catch((e) => {
+            // redirect login here?
+            console.log(`Could not get comments`);
+        }); 
+    };
 
     // TODO: Pull posts from redux?
     React.useEffect(() => {
