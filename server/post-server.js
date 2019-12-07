@@ -4,13 +4,14 @@ const express = require('express');
 const expressWs = require('express-ws');
 const http = require('http');
 const mongoose = require('mongoose');
-const NotesLib = require('./library/notes.js');
+const NotesLib = require('./library/posts-lib.js');
+const UserLib = require('./library/user-lib.js')
 const redis = require('redis');
 const WebSocket = require('ws');
 
 const client = redis.createClient();
 const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
-const port = 3001;
+const port = process.env.WEBSOCKET_HOST || 6000;
 
 const app = express();
 app.use(cookieParser());
@@ -45,7 +46,7 @@ mongoose.connection.on('error', (error) => {
 
 app.use((req, res, next) => {
     console.log("Cookies from request: " + req.cookies);
-    NotesLib.verifyRequest(req.cookies).then((verificationResponse) => {
+    UserLib.verifyUserToken(req.cookies.userId, req.cookies.token).then((verificationResponse) => {
         if (verificationResponse.valid) {
             return next();
         } else {
@@ -58,13 +59,13 @@ app.use((req, res, next) => {
 wss.on('connection', (ws) => {
     console.log('Someone has connected');
 
-    client.incr('myCounter', (err, updatedValue) => {
-        // console.log('Hitting service', process.env.NODE_APP_INSTANCE);
-    });
-    updateUserCount();
-
+    // client.incr('myCounter', (err, updatedValue) => {
+    //     // console.log('Hitting service', process.env.NODE_APP_INSTANCE);
+    //     console.log(`User count ${updatedValue}`);
+    //     // updateUserCount();
+    // });
     ws.on('close', () => {
-        updateUserCount();
+        // updateUserCount();
         console.log('someone has disconnected!');
     });
 

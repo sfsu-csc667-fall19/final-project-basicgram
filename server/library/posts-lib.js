@@ -35,25 +35,34 @@ class BasicgramsLibrary {
     // returns { basicgrams: [array of posts]}
     static getAllBasicgrams(res) {
         // TODO: Cache redis?
-        Basicgram.find({}, (err, basicgrams) => {
-            if ( err ) {
-                console.log('Could not get all basicgrams', err.name);
+        Basicgram
+            .find({})
+            .populate('author', ['username', 'name', 'email', 'created_at', '_id' ])
+            .populate('comments')
+            .exec((err, basicgrams) => {
+                if ( err ) {
+                    console.log('Could not get all basicgrams', err.name);
+
+                    res.send({
+                        err
+                    });
+
+                    return
+                }
 
                 res.send({
-                    err
+                    basicgrams
                 });
-
-                return
-            }
-
-            res.send({
-                basicgrams
             });
-        });
     }
-    // returns {basicgram: basicgram}
-    static getBasicgramById(postId, res) {
-        Basicgram.findById(postId).then((err, basicgram) => {
+
+    static _updateBasicgramComments(postId, comment, cb) {
+        Basicgram
+            .findByIdAndUpdate(postId, { '$push': { 'comments': comment }}, {'new': true, 'upsert': true}, cb);
+    }
+
+    static updateBasicgramComments(postId, comment, res) {
+        this._updateBasicgramComments(postId, comment, (err, basicgram) => {
             if ( err ) {
                 console.log(err);
                 res.send({
@@ -66,23 +75,46 @@ class BasicgramsLibrary {
             });
         });
     }
+    
+    // returns {basicgram: basicgram}
+    static getBasicgramById(postId, res) {
+        Basicgram
+            .findById(postId)
+            .populate('author', ['username', 'name', 'email', 'created_at', '_id' ])
+            .exec((err, basicgram) => {
+                if ( err ) {
+                    console.log(err);
+                    res.send({
+                        err
+                    });
+                    return ;
+                }
+                res.send({
+                    basicgram
+                });
+            });
+    }
     // returns {basicgrams: [user's basicgrams]}
     static getBasicgramsByUser(author, res) {
-        Basicgram.find({author}, (err, basicgrams) => {
-            if ( err ) {
-                console.log(`Could not get ${author}'s basicgrams`, err.name);
+        Basicgram
+            .find({author})
+            .populate('author', ['username', 'name', 'email', 'created_at', '_id' ])
+            .populate('comments')
+            .exec((err, basicgrams) => {
+                if ( err ) {
+                    console.log(`Could not get ${author}'s basicgrams`, err.name);
+
+                    res.send({
+                        err
+                    });
+
+                    return
+                }
 
                 res.send({
-                    err
+                    basicgrams
                 });
-
-                return
-            }
-
-            res.send({
-                basicgrams
             });
-        });
     }
 }
 
