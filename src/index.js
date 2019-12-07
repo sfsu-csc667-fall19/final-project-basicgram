@@ -8,11 +8,13 @@ import thunk from 'redux-thunk';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { insertMessage } from './redux/actions/messageActions';
 import { BrowserRouter as Router } from 'react-router-dom';
+import postReducer from './redux/reducers/postReducer'
 import authReducer from './redux/reducers/authReducer';
 import errorReducer from './redux/reducers/errorReducer';
 
 
 const rootReducer = combineReducers({
+  posts: postReducer,
   auth: authReducer,
   errors: errorReducer,
 });

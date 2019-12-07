@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Divider, CardActions, Link, Card, Hidden, CardMedia, Typography, AppBar, Grid, List, ListItem, ListItemText } from '@material-ui/core'
+import { Divider, CardActions, Link, Card, Hidden, CardMedia, Typography, Grid, List, ListItem, ListItemText } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -38,44 +38,18 @@ export default function PostCard(props) {
             <Grid item sm={12} md={12}>
                 <Card className={classes.card} elevation={3}>
                     <Hidden xsDown>
-                        <CardMedia className={classes.cardMedia} image='https://source.unsplash.com/random' />
+                        <CardMedia className={classes.cardMedia} image={props.post.image} />
                     </Hidden>
                     <div className={classes.cardDetails}>
                         <CardActions className={classes.infoSection}>
                             <Typography component="subtitle1" variant="subtitle1">
-                                <b>abc21</b>
+                                authorname
                             </Typography>
                         </CardActions>
                         <Divider />
                         <div className={classes.commentSection}>
                             <List className={classes.root}>
-                                <ListItem>
-                                    <ListItemText primary="Photos" secondary="Jan 9, 2014" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Work" secondary="Jan 7, 2014" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Vacation" secondary="July 20, 2014" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Vacation" secondary="July 20, 2014" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Vacation" secondary="July 20, 2014" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Vacation" secondary="July 20, 2014" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Vacation" secondary="July 20, 2014" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Vacation" secondary="July 20, 2014" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Vacation" secondary="July 20, 2014" />
-                                </ListItem>
+
                             </List>
                         </div>
                         <Divider />

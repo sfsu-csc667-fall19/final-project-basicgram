@@ -5,6 +5,7 @@ import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import PersonRoundedIcon from '@material-ui/icons/PersonRounded';
 import AddIcon from '@material-ui/icons/Add';
 import { makeStyles } from '@material-ui/core/styles';
+import PostUploadModal from './PostUploadModal';
 
 const useStyles = makeStyles(theme => ({
     appBarBottom: {
@@ -26,8 +27,18 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function BottomAppBar(props) {
+export default function BottomAppBar() {
   const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  
   return (
     <React.Fragment>
       <AppBar position="fixed" color="primary" className={classes.appBarBottom}>
@@ -36,9 +47,10 @@ export default function BottomAppBar(props) {
                         <IconButton edge="start" color="inherit">
                             <HomeRoundedIcon />
                         </IconButton>
-                        <Fab color="primary" aria-label="add" className={classes.fabButton}>
+                        <Fab color="primary" aria-label="add" className={classes.fabButton} onClick={handleClickOpen} >
                             <AddIcon />
                         </Fab>
+                        {open ? <PostUploadModal open={open} close={handleClose} /> : null}
                         <div className={classes.grow} />
                         <IconButton edge="end" color="inherit">
                             <PersonRoundedIcon />

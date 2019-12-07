@@ -43,7 +43,6 @@ app.all('/websocket*', (req, res) => {
   apiProxy.web(req, res, { target: websocketHost });
 });
 
-
 const authServerHost = process.env.AUTH_SERVER_HOST || 'http://localhost:3002';
 console.log(`Auth service proxies to: ${authServerHost}`);
 // for auth

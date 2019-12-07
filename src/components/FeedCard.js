@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Card, CardActionArea, CardContent, CardMedia, CardActions, Divider, Link } from '@material-ui/core'
+import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
   mainGrid: {
@@ -32,6 +33,12 @@ export default function FeedCard(props) {
     <Grid item className={classes.mainGrid} xs={12} md={12}>
       <Card className={classes.card} elevation={3}>
         <CardActionArea onClick={props.onClickPost}>
+          <CardContent>
+            <Typography component="subtitle1" variant="subtitle1">
+              authorname
+            </Typography>
+          </CardContent>
+          <Divider />
           <CardMedia
             className={classes.media}
             image={props.post.image}
@@ -39,10 +46,10 @@ export default function FeedCard(props) {
           />
           <CardContent>
             <Typography component="subtitle2" variant="subtitle2">
-              {props.post.caption}
+              <b>authorname</b> {props.post.caption}
             </Typography>
             <Typography component="p" variant="p" color="textSecondary">
-              {props.post.date}
+              {moment(`${props.post.createdAt}`).startOf('hour').fromNow()}
             </Typography>
           </CardContent>
         </CardActionArea>

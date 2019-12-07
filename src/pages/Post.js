@@ -8,7 +8,7 @@ import TopAppBar from '../components/TopAppBar';
 import BottomAppBar from "../components/BottomAppBar";
 import PostCard from "../components/PostCard";
 
-const Post = ({ logoutUser, history }) => {
+const Post = ({ logoutUser, history, location }) => {
 
     const onLogoutClick = e => {
         e.preventDefault();
@@ -25,7 +25,7 @@ const Post = ({ logoutUser, history }) => {
             <TopAppBar onLogoutClick={onLogoutClick} backButton={backButton} />
             <Container maxWidth="md">
                 <main>
-                    <PostCard />
+                    <PostCard post={location.state.post} />
                 </main>
             </Container>
             <BottomAppBar />
