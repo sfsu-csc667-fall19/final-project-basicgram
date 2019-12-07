@@ -1,9 +1,18 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-var basicgramModel = new mongoose.Schema({
-  caption: String,
-  image: String,
-  imageThumbnail: String,
+const basicgramModel = new mongoose.Schema({
+  caption: {
+    type: String,
+    default: ''
+  },
+  image: {
+    type: String,
+    required: true
+  },
+  imageThumbnail: {
+    type: String,
+    required: true
+  },
   createdAt: { type: Date, default: Date.now },
   author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -12,7 +21,7 @@ var basicgramModel = new mongoose.Schema({
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Message"
+      ref: "Comment"
     }
   ]
 });
