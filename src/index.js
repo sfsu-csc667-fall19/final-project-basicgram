@@ -32,7 +32,7 @@ webSocket.onmessage = (message) => {
       break;
     case 'UPDATE_COMMENT':
       // TODO: UPDATE COMMENT... make an axios request or something
-      console.log('UPDATE COMMENT', messageObject.commentId);
+      console.log('UPDATE COMMENT', messageObject.postId);
       break;
     default:
       console.log('Unexpected message.');
