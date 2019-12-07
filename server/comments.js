@@ -4,7 +4,7 @@ const app = express();
 const mongoose = require("mongoose");
 const User = require("../models/user-model.js");
 const Basicgram = require("../models/basicgramModel");
-const Comment = require("../models/comment");
+const Comment = require("../models/commentModel");
 const ObjectId = mongoose.Types.ObjectId;
 
 const MONGODB_URI = "mongodb://localhost:27017/basicgram-database";

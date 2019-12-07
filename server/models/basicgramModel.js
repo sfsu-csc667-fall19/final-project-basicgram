@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 
 var basicgramModel = new mongoose.Schema({
-  name: String,
+  caption: String,
   image: String,
   imageThumbnail: String,
   createdAt: { type: Date, default: Date.now },
