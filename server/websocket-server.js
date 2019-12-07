@@ -19,10 +19,10 @@ const updateFeed = () => {
     });
 };
 
-const updateComment = (commentId) => {
+const updateComment = (postId) => {
     broadcastMessage({
         type: 'UPDATE_COMMENT',
-        commentId
+        postId
     });
 };
 
@@ -30,7 +30,6 @@ const updateComment = (commentId) => {
 wss.on('connection', (ws) => {
     console.log('Someone has connected');
     ws.on('close', () => {
-        // updateUserCount();
         console.log('someone has disconnected!');
     });
 
