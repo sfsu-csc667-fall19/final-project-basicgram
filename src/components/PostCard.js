@@ -47,6 +47,7 @@ export default function PostCard(props) {
             .post(`/basicgrams/comment/new`, body)
             .then(res => {
                 console.log(res.data.comment);
+                getCommentsByPost(props.post._id)
             })
             .catch((e) => {
                 // redirect login here?
@@ -68,7 +69,8 @@ export default function PostCard(props) {
 
     const submit = async (e) => {
         e.preventDefault();
-        makeNewComment(comment)
+        makeNewComment(comment);
+        setComment('');
     }
 
     React.useEffect(() => {

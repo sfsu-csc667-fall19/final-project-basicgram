@@ -50,6 +50,7 @@ export default function FeedCard(props) {
   const submit = async (e) => {
     e.preventDefault();
     makeNewComment(comment)
+    setComment('')
   }
   return (
     <Grid item className={classes.mainGrid} xs={12} md={12}>
