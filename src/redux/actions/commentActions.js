@@ -5,14 +5,13 @@ import {
     GET_ERRORS
 } from './types';
 
-export const fetchComments = (postId) => (dispatch) => {
+export const fetchCommentsByPost = (postId) => (dispatch) => {
     return axios
         .get(`/basicgrams/comment/post/${postId}`)
         .then(res => {
             dispatch({
                 type: FETCH_COMMENTS_SUCCESS,
                 payload: res.data.comments,
-                postId,
             });
         })
         .catch(err => {

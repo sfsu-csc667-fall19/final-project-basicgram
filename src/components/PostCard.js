@@ -1,7 +1,9 @@
 import React from 'react';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, CardActions, Link, Card, Hidden, CardMedia, Typography, Grid, List, ListItem, ListItemText, Button } from '@material-ui/core'
-import axios from 'axios'
+import {fetchCommentsByPost, addComment} from '../redux/actions/commentActions'
 import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
@@ -33,68 +35,37 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function PostCard(props) {
+const PostCard = ({fetchCommentsByPost, addComment, comment, comments, post}) => {
     const classes = useStyles();
-    const [comments, setComments] = React.useState([]);
-    const [comment, setComment] = React.useState("");
-
-    const makeNewComment = (text) => {
-        const body = {
-            text,
-            postId: props.post._id
-        };
-        axios
-            .post(`/basicgrams/comment/new`, body)
-            .then(res => {
-                console.log(res.data.comment);
-            })
-            .catch((e) => {
-                // redirect login here?
-                console.log(`Could not make new comment`);
-            });
-    }
-
-    const getCommentsByPost = (postId) => {
-        axios
-            .get(`/basicgrams/comment/post/${postId}`)
-            .then(res => {
-                setComments(res.data.comments)
-            })
-            .catch((e) => {
-                // redirect login here?
-                console.log(`Could not get comments`);
-            });
-    }
 
     const submit = async (e) => {
         e.preventDefault();
-        makeNewComment(comment)
+        addComment(post._id, comment)
     }
 
     React.useEffect(() => {
-        getCommentsByPost(props.post._id);
-    }, []);
+        fetchCommentsByPost(post._id);
+    }, [fetchCommentsByPost]);
 
-    console.log(comments)
     return (
         <Grid className={classes.mainGrid}>
             <Grid item sm={12} md={12}>
                 <Card className={classes.card} elevation={3}>
                     <Hidden xsDown>
-                        <CardMedia className={classes.cardMedia} image={props.post.image} />
+                        <CardMedia className={classes.cardMedia} image={post.image} />
                     </Hidden>
                     <div className={classes.cardDetails}>
                         <CardActions className={classes.infoSection}>
                             <Typography component="subtitle1" variant="subtitle1">
-                                <b>{props.post.author.username}</b>
+                                <b>{post.author.username}</b>
                             </Typography>
                         </CardActions>
                         <Divider />
                         <div className={classes.commentSection}>
                             <List className={classes.root}>
-                                {comments.map(comment => {
-                                    return <ListItem>
-                                        <ListItemText primary={comment.text} secondary={moment(`${comment.createdAt}`).startOf('hour').fromNow()}></ListItemText>
+                                {comments.comments.map(commentPost => {
+                                    return <ListItem key={commentPost._id}>
+                                        <ListItemText primary={commentPost.text} secondary={moment(`${commentPost.createdAt}`).startOf('second').fromNow()}></ListItemText>
                                     </ListItem>
                                 })
                                 }
@@ -103,7 +74,7 @@ export default function PostCard(props) {
                         <Divider />
                         <CardActions className={classes.inputSection}>
                             <form onSubmit={submit}>
-                                <input type="text" placeholder="Add a comment" className={classes.commentInput} value={comment} onChange={e => setComment(e.target.value)} />
+                                {/* <input type="text" placeholder="Add a comment" className={classes.commentInput} value={comment.comment} onChange={e => comment.comment(e.target.value)} /> */}
                                 <Button
                                     type="submit"
                                     component="button"
@@ -117,3 +88,18 @@ export default function PostCard(props) {
         </Grid>
     );
 }
+
+PostCard.propTypes = {
+    fetchCommentsByPost: PropTypes.func.isRequired,
+    addComment: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = state => ({
+    comment: state.comment,
+    comments: state.comments
+})
+
+export default connect(
+    mapStateToProps,
+    { fetchCommentsByPost, addComment }
+)(PostCard);

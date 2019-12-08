@@ -37,8 +37,6 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
         logoutUser();
     }
 
-    console.log(posts)
-
     return (
         <React.Fragment>
             <TopAppBar onLogoutClick={onLogoutClick} />
