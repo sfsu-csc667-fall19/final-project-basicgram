@@ -2,6 +2,8 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const mongoose = require('mongoose');
+const { check, validationResult } = require('express-validator');
+const { validateReg } = require('./validator.js');
 
 const UserLib = require('./library/user-lib.js');
 
@@ -37,7 +39,16 @@ app.post('/auth/login', (req, res) => {
     UserLib.loginUser(username, password, res);
 });
 
-app.post('/auth/create-user', (req, res) => {
+app.post('/auth/create-user', validateReg(), (req, res) => {
+	const err = validationResult(req).array({ onlyFirstError: true });
+	if (err.length !== 0) {
+        console.log("\nExpress-validator error messages:\n")
+        // NEED to redirect to sign-up page and display them.
+        err.forEach((error) => {
+            console.log(`error: ${error.msg}\n`);
+        })
+    }
+      
     const username = req.body.username;
     const password = req.body.password;
     const name = req.body.name;
