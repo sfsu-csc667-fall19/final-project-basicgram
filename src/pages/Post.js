@@ -19,7 +19,7 @@ const Post = ({ logoutUser, history, location }) => {
         e.preventDefault();
         history.push('/feed')
     }
-
+    console.log(location.state.post)
     return (
         <React.Fragment>
             <TopAppBar onLogoutClick={onLogoutClick} backButton={backButton} />
