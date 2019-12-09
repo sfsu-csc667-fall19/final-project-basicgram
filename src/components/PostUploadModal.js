@@ -8,6 +8,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import Dropzone from 'react-dropzone';
 
 const styles = theme => ({
     root: {
@@ -57,17 +58,18 @@ export default function PostUploadModal(props) {
                     New Post
         </DialogTitle>
                 <DialogContent dividers>
-                        <form action="/basicgrams/new" method="POST" enctype="multipart/form-data">
-                            <input type="text" placeholder="caption"
-                                minlength="1"
-                                maxlength="40" required
-                                pattern="([A-z 0-9].*[A-z 0-9])" title="Only alphanumeric characters allowed" />
-                                <input type="file" id="image" name="image" accept="image/*" required />
-                                    <button>Submit</button>
-
-                </form>
+                    <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
+                        {({ getRootProps, getInputProps }) => (
+                            <section>
+                                <div {...getRootProps()}>
+                                    <input {...getInputProps()} />
+                                    <p>Drag 'n' drop some files here, or click to select files</p>
+                                </div>
+                            </section>
+                        )}
+                    </Dropzone>
                 </DialogContent>
             </Dialog>
-            </React.Fragment>
-                );
+        </React.Fragment>
+    );
 }
