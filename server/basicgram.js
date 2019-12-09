@@ -1,27 +1,27 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
-const axios = require('axios');
+const cookieParser = require("cookie-parser");
+const axios = require("axios");
 // redis stuff
 const redis = require("redis");
 const redisClient = redis.createClient();
 // redis stuff
 
 // mongoosey stuff
-const mongoose = require('mongoose');
-const BasicgramsLib = require('./library/posts-lib.js');
-const CommentsLib = require('./library/comments-lib.js');
-require('./models/user-model.js');
-require('./models/basicgramModel.js');
-require('./models/commentModel.js');
+const mongoose = require("mongoose");
+const BasicgramsLib = require("./library/posts-lib.js");
+const CommentsLib = require("./library/comments-lib.js");
+require("./models/user-model.js");
+require("./models/basicgramModel.js");
+require("./models/commentModel.js");
 
-const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
+const MONGODB_URI = "mongodb://localhost:27017/basicgram-database";
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
-mongoose.connection.on('connected', () => {
-    console.log("Connected to MongoDB");
+mongoose.connection.on("connected", () => {
+  console.log("Connected to MongoDB");
 });
-mongoose.connection.on('error', (error) => {
-    console.log("ERROR: " + error);
+mongoose.connection.on("error", error => {
+  console.log("ERROR: " + error);
 });
 // mongoosey stuff
 
@@ -47,7 +47,7 @@ cloudinary.config({
 });
 // *** image stuff ***
 
-// express app stuff 
+// express app stuff
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser());
@@ -56,30 +56,30 @@ app.use((req, res, next) => {
   const token = req.cookies.token;
   const userId = req.cookies.userId;
   const body = {
-      token,
-      userId
+    token,
+    userId
   };
 
   redisClient.get(token, (err, cachedValue) => {
-      console.log(err);
+    console.log(err);
 
-      if ( cachedValue ) {
-        console.log('Cache hit!', cachedValue);
-        if ( cachedValue === 'true' ) {
-          console.log(cachedValue);
-          return next();
-        } else {
-          res.status(403);
-          return res.send({
-            valid: false
-          });
-        }
+    if (cachedValue) {
+      console.log("Cache hit!", cachedValue);
+      if (cachedValue === "true") {
+        console.log(cachedValue);
+        return next();
       } else {
-        axios
-        .post('http://localhost:4000/auth/verify', body)
+        res.status(403);
+        return res.send({
+          valid: false
+        });
+      }
+    } else {
+      axios
+        .post("http://localhost:4000/auth/verify", body)
         .then(response => {
           console.log(response);
-          if ( response.data && response.data.valid ) {
+          if (response.data && response.data.valid) {
             console.log(response);
             redisClient.set(token, true);
             return next();
@@ -91,32 +91,32 @@ app.use((req, res, next) => {
             });
           }
         })
-        .catch((e) => {
+        .catch(e => {
           console.log(e);
           res.status(404);
           return res.send({
             valid: false
           });
         });
-      }
+    }
   });
 });
 
 // create new post
-app.post("/basicgrams/new", upload.single("image"), (req, res) => {
-  cloudinary.uploader.upload(req.file.path, (result, err) => {
-    if (err) {
-      console.log("Image upload error...", err)
-      return res.send({
-        err
-      });
-    }
+app.post("/basicgrams/new", upload.single("file"), (req, res) => {
+  if (req.files === null) {
+    return res.status(400).json({ msg: 'No file uploaded' });
+  }
+
+  cloudinary.uploader.upload(req.file.path, (result) => {
+
 
     const author = req.cookies.userId;
-    const caption = req.body.caption || '';
+    const caption = req.body.caption || "";
     const image = result.secure_url;
-    const imageThumbnail = "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
-    result.public_id;
+    const imageThumbnail =
+      "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
+      result.public_id;
 
     // get author name and username
     BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, res);
@@ -169,4 +169,4 @@ app.get("/basicgrams/comment/post/:id", (req, res) => {
 const PORT = 5000;
 app.listen(PORT);
 
-// /express app stuff 
+// /express app stuff

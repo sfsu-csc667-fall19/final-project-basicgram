@@ -9,6 +9,7 @@ import PrivateRoute from './PrivateRoute';
 import Feed from './pages/Feed';
 import Profile from './pages/Profile'
 import Post from './pages/Post';
+import NewPost from './pages/NewPost';
 
 
 const App = ({ dispatch }) => {
@@ -26,6 +27,7 @@ const App = ({ dispatch }) => {
         <Route path="/signup" component={SignUp} />
         <PrivateRoute exact path="/feed" component={Feed} />
         <PrivateRoute exact path="/profile" component={Profile} />
+        <Route exact path="/feed/newpost" component={NewPost} />
         <Route path="/feed/post" component={Post} />
       </Switch>
     </div>

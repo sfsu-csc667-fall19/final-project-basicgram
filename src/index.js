@@ -6,14 +6,13 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { insertMessage } from './redux/actions/messageActions';
 import { BrowserRouter as Router } from 'react-router-dom';
-import postReducer from './redux/reducers/postReducer'
 import authReducer from './redux/reducers/authReducer';
 import errorReducer from './redux/reducers/errorReducer';
 
 
 const rootReducer = combineReducers({
-  posts: postReducer,
   auth: authReducer,
   errors: errorReducer,
 });
@@ -22,14 +21,6 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const webSocket = new WebSocket('ws://' + window.location.host.split(':')[0] + (window.location.port && `:${window.location.port}`) + '/websocket');
 
-
-export const getAllPosts = (state) => {
-  return postReducer.getAllPosts(state.posts);
-};
-
-export const getPostById = (state, id) => {
-  return postReducer.getPostById(state.posts, id);
-};
 
 webSocket.onmessage = (message) => {
   const messageObject = JSON.parse(message.data);

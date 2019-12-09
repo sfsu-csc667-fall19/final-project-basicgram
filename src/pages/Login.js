@@ -43,12 +43,12 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(3, 0, 2),
     },
     icon: {
-        fontFamily: 'Abril Fatface, cursive',
+        fontFamily: 'Satisfy, cursive',
         marginBottom: theme.spacing(8)
     }
 }));
 
-const Login = ({ loginUser, auth, history }) => {
+const Login = ({loginUser, auth, history}) => {
     const classes = useStyles();
     const [userName, setUserName] = React.useState("");
     const [userPassword, setUserPassword] = React.useState("");
@@ -64,7 +64,7 @@ const Login = ({ loginUser, auth, history }) => {
 
     if (auth.isAuthenticated) {
         history.push("/feed");
-    }
+      }
 
     return (
         <Grid container component="main" className={classes.root}>
@@ -72,8 +72,8 @@ const Login = ({ loginUser, auth, history }) => {
             <Grid item xs={false} sm={4} md={8} className={classes.image} />
             <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} className={classes.container} square>
                 <div className={classes.paper}>
-                    <Typography component="h1" variant="h3" className={classes.icon}>
-                        basic.
+                <Typography component="h1" variant="h3" className={classes.icon}>
+                        Story
           </Typography>
                     <form className={classes.form} onSubmit={submit} noValidate>
                         <TextField

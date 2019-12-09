@@ -11,8 +11,8 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(theme => ({
   toolbarTitle: {
     flex: 1,
-    textAlign: 'center',
-    fontFamily: 'Abril Fatface, cursive'
+    alignContent: 'center',
+    fontFamily: 'Satisfy, cursive',
   },
   appBar: {
     background: '#fff',
@@ -57,7 +57,7 @@ export default function TopAppBar(props) {
               noWrap
               className={classes.toolbarTitle}
             >
-              basic.
+              Story
           </Typography>
             <Link style={{ cursor: 'pointer' }} onClick={props.onLogoutClick}>Logout</Link>
           </Toolbar>

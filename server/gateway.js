@@ -32,7 +32,7 @@ appServer.on('upgrade', (req, socket, head) => {
 
 const basicgramHost = process.env.BASICGRAM_HOST || 'http://localhost:5000';
 console.log(`Basicgram end proxies to: ${basicgramHost}`);
-app.all('/basicgram*', (req, res) => {
+app.all('/basicgrams*', (req, res) => {
   apiProxy.web(req, res, { target: basicgramHost });
 });
 
@@ -42,6 +42,7 @@ app.all('/websocket*', (req, res) => {
   console.log('incoming ws');
   apiProxy.web(req, res, { target: websocketHost });
 });
+
 
 const authServerHost = process.env.AUTH_SERVER_HOST || 'http://localhost:3002';
 console.log(`Auth service proxies to: ${authServerHost}`);
