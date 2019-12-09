@@ -30,11 +30,7 @@ export const addComment = (postId, text) => (dispatch) => {
     return axios
         .post(`/basicgrams/comment/new`, body)
         .then(res => {
-            dispatch({
-                type: ADD_COMMENT,
-                payload: res.data.comment,
-                postId,
-            })
+            console.log('Succesfully added comment')
         })
         .catch(err => {
             dispatch({

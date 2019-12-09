@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, CardActions, Link, Card, Hidden, CardMedia, Typography, Grid, List, ListItem, ListItemText, Button } from '@material-ui/core'
-import {fetchCommentsByPost, addComment} from '../redux/actions/commentActions'
+import { fetchCommentsByPost, addComment } from '../redux/actions/commentActions'
 import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => ({
         height: '65vh',
         overflowY: 'auto'
     },
+    inputSection: {
+        padding: theme.spacing(2),
+    },
     commentInput: {
         width: '100%',
         border: 'none',
@@ -35,12 +38,13 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const PostCard = ({fetchCommentsByPost, addComment, comment, comments, post}) => {
+const PostCard = ({ fetchCommentsByPost, addComment, comments, post }) => {
+    const [comment, setComment] = React.useState("");
     const classes = useStyles();
 
     const submit = async (e) => {
         e.preventDefault();
-        addComment(post._id, comment)
+        addComment(post._id, comment).then(() => setComment(''));
     }
 
     React.useEffect(() => {
@@ -73,13 +77,17 @@ const PostCard = ({fetchCommentsByPost, addComment, comment, comments, post}) =>
                         </div>
                         <Divider />
                         <CardActions className={classes.inputSection}>
-                            <form onSubmit={submit}>
-                                {/* <input type="text" placeholder="Add a comment" className={classes.commentInput} value={comment.comment} onChange={e => comment.comment(e.target.value)} /> */}
-                                <Button
+                            <form onSubmit={submit} style={{width: '100%'}}>
+                                <button
                                     type="submit"
-                                    component="button"
-                                    style={{ fontSize: '13px' }}
-                                >Post</Button>
+                                    style={{ float: 'right', fontSize: '13px' }}
+                                >Post</button>
+                                <div style={{
+                                    overflow: 'hidden',
+                                    paddingRight: '0.5em'
+                                }}>
+                                    <input type="text" placeholder="Add a comment" className={classes.commentInput} value={comment} onChange={e => setComment(e.target.value)} />
+                                </div>
                             </form>
                         </CardActions>
                     </div>
@@ -95,9 +103,9 @@ PostCard.propTypes = {
 }
 
 const mapStateToProps = state => ({
-    comment: state.comment,
     comments: state.comments
 })
+
 
 export default connect(
     mapStateToProps,
