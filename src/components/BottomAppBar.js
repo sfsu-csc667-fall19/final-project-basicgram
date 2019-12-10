@@ -39,6 +39,7 @@ export default function BottomAppBar() {
     setOpen(false);
   };
   
+  
   return (
     <React.Fragment>
       <AppBar position="fixed" color="primary" className={classes.appBarBottom}>
@@ -53,7 +54,7 @@ export default function BottomAppBar() {
                         {open ? <PostUploadModal open={open} close={handleClose} /> : null}
                         <div className={classes.grow} />
                         <IconButton edge="end" color="inherit">
-                            <PersonRoundedIcon />
+                            <PersonRoundedIcon/>
                         </IconButton>
                     </Toolbar>
                 </Container>
