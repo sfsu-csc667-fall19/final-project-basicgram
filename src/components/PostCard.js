@@ -27,9 +27,6 @@ const useStyles = makeStyles(theme => ({
         height: '65vh',
         overflowY: 'auto'
     },
-    inputSection: {
-        padding: theme.spacing(2),
-    },
     commentInput: {
         width: '100%',
         border: 'none',
@@ -68,8 +65,34 @@ const PostCard = ({ fetchCommentsByPost, addComment, comments, post }) => {
                         <div className={classes.commentSection}>
                             <List className={classes.root}>
                                 {comments.comments.map(commentPost => {
-                                    return <ListItem key={commentPost._id}>
-                                        <ListItemText primary={commentPost.text} secondary={moment(`${commentPost.createdAt}`).startOf('second').fromNow()}></ListItemText>
+                                    return <ListItem>
+                                     <ListItemText
+                                        primary={
+                                            <React.Fragment>
+                                                <Typography
+                                                    component="span"
+                                                    variant="body2"
+                                                    className={classes.inline}
+                                                    color="textPrimary"
+                                                >
+                                                    <b>{commentPost.author.username}</b> {commentPost.text}
+                                                </Typography>
+                                            </React.Fragment>
+                                        }
+                                        secondary={
+                                            <React.Fragment>
+                                                <Typography
+                                                    component="span"
+                                                    variant="body2"
+                                                    className={classes.inline}
+                                                    color="textSecondary"
+                                                >
+                                                    {moment(`${commentPost.createdAt}`).startOf('second').fromNow()}
+                                                </Typography>
+                                            </React.Fragment>
+                                            
+                                        }
+                                    />
                                     </ListItem>
                                 })
                                 }
@@ -77,7 +100,7 @@ const PostCard = ({ fetchCommentsByPost, addComment, comments, post }) => {
                         </div>
                         <Divider />
                         <CardActions className={classes.inputSection}>
-                            <form onSubmit={submit} style={{width: '100%'}}>
+                            <form onSubmit={submit} style={{ width: '100%' }}>
                                 <button
                                     type="submit"
                                     style={{ float: 'right', fontSize: '13px' }}

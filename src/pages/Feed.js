@@ -30,12 +30,14 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
     
     React.useEffect(() => {
         fetchAllPosts();
-    }, []);
+    }, [fetchAllPosts]);
 
     const onLogoutClick = e => {
         e.preventDefault();
         logoutUser();
-    }
+    } 
+
+    console.log(posts.posts)
 
     return (
         <React.Fragment>

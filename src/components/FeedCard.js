@@ -58,7 +58,7 @@ const FeedCard = ({addComment, post, onClickPost }) => {
               <b>{post.author.username}</b> {post.caption}
             </Typography>
             <Typography component="p" variant="p" color="textSecondary">
-              {moment(`${post.createdAt}`).startOf('hour').fromNow()}
+              {moment(`${post.createdAt}`).startOf('second').fromNow()}
             </Typography>
           </CardContent>
         </CardActionArea>
