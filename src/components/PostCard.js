@@ -1,7 +1,9 @@
 import React from 'react';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, CardActions, Link, Card, Hidden, CardMedia, Typography, Grid, List, ListItem, ListItemText, Button } from '@material-ui/core'
-import axios from 'axios'
+import { fetchCommentsByPost, addComment } from '../redux/actions/commentActions'
 import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
@@ -33,68 +35,64 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function PostCard(props) {
-    const classes = useStyles();
-    const [comments, setComments] = React.useState([]);
+const PostCard = ({ fetchCommentsByPost, addComment, comments, post }) => {
     const [comment, setComment] = React.useState("");
-
-    const makeNewComment = (text) => {
-        const body = {
-            text,
-            postId: props.post._id
-        };
-        axios
-            .post(`/basicgrams/comment/new`, body)
-            .then(res => {
-                console.log(res.data.comment);
-            })
-            .catch((e) => {
-                // redirect login here?
-                console.log(`Could not make new comment`);
-            });
-    }
-
-    const getCommentsByPost = (postId) => {
-        axios
-            .get(`/basicgrams/comment/post/${postId}`)
-            .then(res => {
-                setComments(res.data.comments)
-            })
-            .catch((e) => {
-                // redirect login here?
-                console.log(`Could not get comments`);
-            });
-    }
+    const classes = useStyles();
 
     const submit = async (e) => {
         e.preventDefault();
-        makeNewComment(comment)
+        addComment(post._id, comment).then(() => setComment(''));
     }
 
     React.useEffect(() => {
-        getCommentsByPost(props.post._id);
-    }, []);
+        fetchCommentsByPost(post._id);
+    }, [fetchCommentsByPost]);
 
-    console.log(comments)
     return (
         <Grid className={classes.mainGrid}>
             <Grid item sm={12} md={12}>
                 <Card className={classes.card} elevation={3}>
                     <Hidden xsDown>
-                        <CardMedia className={classes.cardMedia} image={props.post.image} />
+                        <CardMedia className={classes.cardMedia} image={post.image} />
                     </Hidden>
                     <div className={classes.cardDetails}>
                         <CardActions className={classes.infoSection}>
                             <Typography component="subtitle1" variant="subtitle1">
-                                <b>{props.post.author.username}</b>
+                                <b>{post.author.username}</b>
                             </Typography>
                         </CardActions>
                         <Divider />
                         <div className={classes.commentSection}>
                             <List className={classes.root}>
-                                {comments.map(comment => {
+                                {comments.comments.map(commentPost => {
                                     return <ListItem>
-                                        <ListItemText primary={comment.text} secondary={moment(`${comment.createdAt}`).startOf('hour').fromNow()}></ListItemText>
+                                     <ListItemText
+                                        primary={
+                                            <React.Fragment>
+                                                <Typography
+                                                    component="span"
+                                                    variant="body2"
+                                                    className={classes.inline}
+                                                    color="textPrimary"
+                                                >
+                                                    <b>{commentPost.author.username}</b> {commentPost.text}
+                                                </Typography>
+                                            </React.Fragment>
+                                        }
+                                        secondary={
+                                            <React.Fragment>
+                                                <Typography
+                                                    component="span"
+                                                    variant="body2"
+                                                    className={classes.inline}
+                                                    color="textSecondary"
+                                                >
+                                                    {moment(`${commentPost.createdAt}`).startOf('second').fromNow()}
+                                                </Typography>
+                                            </React.Fragment>
+                                            
+                                        }
+                                    />
                                     </ListItem>
                                 })
                                 }
@@ -102,13 +100,17 @@ export default function PostCard(props) {
                         </div>
                         <Divider />
                         <CardActions className={classes.inputSection}>
-                            <form onSubmit={submit}>
-                                <input type="text" placeholder="Add a comment" className={classes.commentInput} value={comment} onChange={e => setComment(e.target.value)} />
-                                <Button
+                            <form onSubmit={submit} style={{ width: '100%' }}>
+                                <button
                                     type="submit"
-                                    component="button"
-                                    style={{ fontSize: '13px' }}
-                                >Post</Button>
+                                    style={{ float: 'right', fontSize: '13px' }}
+                                >Post</button>
+                                <div style={{
+                                    overflow: 'hidden',
+                                    paddingRight: '0.5em'
+                                }}>
+                                    <input type="text" placeholder="Add a comment" className={classes.commentInput} value={comment} onChange={e => setComment(e.target.value)} />
+                                </div>
                             </form>
                         </CardActions>
                     </div>
@@ -117,3 +119,18 @@ export default function PostCard(props) {
         </Grid>
     );
 }
+
+PostCard.propTypes = {
+    fetchCommentsByPost: PropTypes.func.isRequired,
+    addComment: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = state => ({
+    comments: state.comments
+})
+
+
+export default connect(
+    mapStateToProps,
+    { fetchCommentsByPost, addComment }
+)(PostCard);

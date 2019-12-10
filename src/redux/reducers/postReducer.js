@@ -1,10 +1,12 @@
 import {
     FETCH_POSTS_SUCCESS,
-    FETCH_USER_POSTS_SUCCESS
+    FETCH_USER_POSTS_SUCCESS,
+    POST_UPLOAD_SUCCESS
 } from "../actions/types";
 
 const initialState = {
-    posts: []
+    posts: [],
+    newPost: {}
 };
 
 export default function(state = initialState, action) {
@@ -19,6 +21,11 @@ export default function(state = initialState, action) {
                 ...state,
                 posts: action.payload
             };
+            case POST_UPLOAD_SUCCESS:
+                return {
+                    ...state,
+                    newPost: action.payload
+                };
         default:
             return state;
     }

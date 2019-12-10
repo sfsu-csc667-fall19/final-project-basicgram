@@ -7,13 +7,18 @@ import {
 } from "./types";
 
 
-export const uploadPost = ({ caption }, file) => (dispatch) => {
+export const uploadPost = (caption, file) => (dispatch) => {
     let formData = new FormData();
-    formData.append('photo', file);
+    formData.append('image', file);
     formData.append('caption', caption);
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+    }
     return axios
-    .post('/basicgrams/new')
-    .then(res => {      
+    .post('/basicgrams/new', formData, config)
+    .then(res => {
       dispatch({
         type: POST_UPLOAD_SUCCESS,
         payload: res.newBasicgram,

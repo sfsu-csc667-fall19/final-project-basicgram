@@ -4,11 +4,11 @@ import {
 } from "../actions/types";
 
 const initialState = {
-    comment: '',
     comments: [],
 };
 
 export default function(state = initialState, action) {
+
     switch (action.type) {
         case FETCH_COMMENTS_SUCCESS:
             return {
@@ -18,7 +18,6 @@ export default function(state = initialState, action) {
         case ADD_COMMENT:
             return {
                 ...state,
-                comment: action.payload
             };
         default:
             return state;

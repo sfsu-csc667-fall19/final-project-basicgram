@@ -8,6 +8,7 @@ import thunk from 'redux-thunk';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import postReducer from './redux/reducers/postReducer'
+import commentReducer from './redux/reducers/commentReducer'
 import authReducer from './redux/reducers/authReducer';
 import errorReducer from './redux/reducers/errorReducer';
 
@@ -16,6 +17,8 @@ const rootReducer = combineReducers({
   posts: postReducer,
   auth: authReducer,
   errors: errorReducer,
+  comment: commentReducer,
+  comments: commentReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
