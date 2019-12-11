@@ -2,9 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Container } from '@material-ui/core'
+import { Grid, Container, Typography } from '@material-ui/core'
 import { logoutUser } from '../redux/actions/authActions';
 import { fetchAllPosts } from '../redux/actions/postActions';
+import noposts from "../noposts.svg";
 
 import TopAppBar from '../components/TopAppBar';
 import FeedCard from '../components/FeedCard';
@@ -27,7 +28,7 @@ const getCook = (cookiename) => {
 
 const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
     const classes = useStyles();
-    
+
     React.useEffect(() => {
         fetchAllPosts();
     }, [fetchAllPosts]);
@@ -35,7 +36,7 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
     const onLogoutClick = e => {
         e.preventDefault();
         logoutUser();
-    } 
+    }
 
     const onFeedClick = () => {
         history.push("/feed")
@@ -53,16 +54,34 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
             <Container className={classes.container} maxWidth="sm">
                 {/* posts */}
                 <Grid container spacing={3}>
-                    {posts.posts ? ([...posts.posts].reverse().map(post => (
+                    {posts.posts.length > 0 ? ([...posts.posts].reverse().map(post => (
                         <FeedCard post={post} onClickPost={() => history.push({
                             pathname: `/feed/post/${post._id}`,
-                            state: { post: post, flag:'feed'}
-                          })} />
-                    ))) : <h1>No Posts Available</h1>}
+                            state: { post: post, flag: 'feed' }
+                        })} />
+                    ))) : (
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    left: '50%',
+                                    top: '50%',
+                                    transform: 'translate(-50%, -50%)'
+                                }}
+                            >
+                                <img src={noposts} height="150px" />
+                                <Typography
+                            component="h5"
+                            variant="h5"
+                            align="center"
+                            noWrap
+                        >
+                            No posts available
+                </Typography>
+                    </div>)}
                 </Grid>
                 {/* End sub featured posts */}
             </Container>
-            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick}/>
+            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick} />
         </React.Fragment>
     );
 }

@@ -1,40 +1,36 @@
 import React from "react";
 import PropTypes from "prop-types";
 import '../Profile.css'
+import noposts from '../noposts.svg'
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 import TopAppBar from '../components/TopAppBar'
 import Typography from '@material-ui/core/Typography';
 import { fetchPostsByUserId } from '../redux/actions/postActions';
+import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import Container from '@material-ui/core/Container';
 import { logoutUser } from '../redux/actions/authActions';
 import BottomAppBar from '../components/BottomAppBar';
 import Axios from "axios";
-import { Paper } from "@material-ui/core";
+import { Paper, Divider } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     // toolbar: {
     //     borderBottom: `1px solid ${theme.palette.divider}`,
     // },
-    toolbarTitle: {
-        flex: 1,
-        alignContent: 'center',
-        fontFamily: 'Abril Fatface, cursive'
-    },
     NameTitle: {
         flex: 1,
-        paddingBottom: '3rem',
-        alignContent: 'center',
-        fontFamily: '-apple-system, system-ui, "Segoe UI"',
+        paddingBottom: '1rem',
+        color: '#7E7E7E'
     },
     userNameTitle: {
         flex: 1,
         paddingTop: '2rem',
         paddingBottom: '0.5rem',
-        alignContent: 'center',
+        fontFamily: 'Abril Fatface, cursive'
     },
     toolbarSecondary: {
         justifyContent: 'space-between',
@@ -138,9 +134,8 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
             <TopAppBar onLogoutClick={onLogoutClick} />
             <Container className={classes.container} maxWidth="md">
                 <Typography
-                    component="h2"
-                    variant="subtitle"
-                    align="center"
+                    component="h3"
+                    variant="h3"
                     noWrap
                     className={classes.userNameTitle}
                 >
@@ -148,14 +143,14 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
                 </Typography>
                 <Typography
                     component="h5"
-                    align="center"
                     noWrap
                     className={classes.NameTitle}
                 >
                     {user.name}
                 </Typography>
+                <Divider style={{marginBottom: '1rem'}} />
                 <GridList cellHeight={300} cols={3} spacing={20}>
-                    {posts.posts ? ([...posts.posts].reverse().map(post => (
+                    {posts.posts.length > 0 ? ([...posts.posts].reverse().map(post => (
                         <GridListTile 
                             key={post._id} 
                             post={post} 
@@ -167,7 +162,28 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
                         >
                             <img src={post.image} />
                         </GridListTile>
-                    ))) : <h1>No Posts Available</h1>}
+                    ))) : (
+                        <Grid container>
+                        <div
+                        style={{
+                            position: 'absolute',
+                            left: '50%',
+                            top: '50%',
+                            transform: 'translate(-50%, -50%)'
+                        }}
+                    >
+                        <img src={noposts} height="150px" />
+                        <Typography
+                    component="h5"
+                    variant="h5"
+                    align="center"
+                    noWrap
+                >
+                    No posts available
+        </Typography>
+            </div>
+            </Grid>
+            )}
                 </GridList>
             </Container>
             <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick}/>

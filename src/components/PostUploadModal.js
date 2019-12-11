@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withStyles } from '@material-ui/core/styles';
-import { Input, TextField, DialogActions, Button } from '@material-ui/core';
+import { Input, TextField, DialogActions, Button, Snackbar } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -49,6 +49,12 @@ const PostUploadModal = ({ uploadPost, close, open }) => {
     const [file, setFile] = useState(null);
     const [fileURL, setFileURL] = useState('')
     const [caption, setCaption] = useState('');
+    const [state, setState] = React.useState({
+        vertical: 'top',
+        horizontal: 'center',
+      });
+    
+    const { vertical, horizontal } = state;
 
     const resetFile = e => {
         e.preventDefault();
