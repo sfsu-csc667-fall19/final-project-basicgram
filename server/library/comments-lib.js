@@ -9,12 +9,12 @@ require('../models/commentModel.js');
 require('../models/user-model.js');
 
 class CommentsLibrary {
-    static createComment(author, post, text, kafkaProducerLib, res) {
+    static createComment(author, postId, text, kafkaProducerLib, res) {
 
         const newComment = new Comment({
             author: new ObjectId(author),
             text,
-            post: new ObjectId(post),
+            postId: new ObjectId(postId),
             createdAt: new Date(),
         });
 
@@ -27,7 +27,7 @@ class CommentsLibrary {
                 return false;
             }
 
-            BasicgramsLib._updateBasicgramComments(post, comment, (err, basicgram) => {
+            BasicgramsLib._updateBasicgramComments(postId, comment, (err, basicgram) => {
                 if (err) {
                     console.log(err.name);
                     res.send({
@@ -41,7 +41,7 @@ class CommentsLibrary {
                     basicgram
                 });
 
-                kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_COMMENT_TOPIC, post);
+                kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_COMMENT_TOPIC, postId);
             });
         });
     }
