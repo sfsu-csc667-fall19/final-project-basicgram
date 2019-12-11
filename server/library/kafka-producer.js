@@ -3,9 +3,9 @@ class KafkaProducerLibrary {
     this.kafkaProducer = kafkaProducer;
   }
 
-  produceMessage = (topic, message) => {
+  produceMessage(topic, message) {
     let updateFeedPayload = [{
-      topic: topic
+      topic: topic,
       message: message !== null ? message : topic
     }];
 

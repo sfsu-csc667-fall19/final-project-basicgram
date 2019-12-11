@@ -47,8 +47,8 @@ cloudinary.config({
 // *** image stuff ***
 
 try {
-  const KafkaClient = new kafka.KafkaClient({kafkaHost: CONSTANTS.KAFKA_SERVER})
-  const kafkaProducer = new kafka.Producer(KafkaClient);
+  const KafkaClient = new kafka.KafkaClient();
+  const kafkaProducer = new kafka.HighLevelProducer(KafkaClient);
 
   kafkaProducer.on('ready', () => {
     const kafkaProducerLib = new KafkaProducerLib(kafkaProducer);
@@ -177,4 +177,6 @@ try {
     const PORT = 5000;
     app.listen(PORT);
   });
+} catch (e) {
+  // console.log(e);
 }
