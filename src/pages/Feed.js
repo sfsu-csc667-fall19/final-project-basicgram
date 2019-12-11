@@ -37,6 +37,14 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
         logoutUser();
     } 
 
+    const onFeedClick = () => {
+        history.push("/feed")
+    }
+
+    const onProfileClick = () => {
+        history.push("/profile")
+    }
+
     console.log(posts.posts)
 
     return (
@@ -54,7 +62,7 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
                 </Grid>
                 {/* End sub featured posts */}
             </Container>
-            <BottomAppBar />
+            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick}/>
         </React.Fragment>
     );
 }
