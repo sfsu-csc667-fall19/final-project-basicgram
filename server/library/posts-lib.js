@@ -24,12 +24,13 @@ class BasicgramsLibrary {
                     err
                 });
 
-                return;
+                return false;
             }
         
             res.send({
                 newBasicgram
             });
+            return true;
         });
     };
     // returns { basicgrams: [array of posts]}

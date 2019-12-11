@@ -22,7 +22,7 @@ class CommentsLibrary {
                 res.send({
                     err
                 });
-                return;
+                return false;
             }
 
             BasicgramsLib._updateBasicgramComments(post, comment, (err, basicgram) => {
@@ -38,6 +38,8 @@ class CommentsLibrary {
                     comment,// return comment or basicgram here?
                     basicgram
                 });
+
+                return true;
             });
         });
     }
