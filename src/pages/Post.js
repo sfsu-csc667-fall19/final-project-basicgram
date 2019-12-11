@@ -17,7 +17,17 @@ const Post = ({ logoutUser, history, location }) => {
 
     const backButton = e => {
         e.preventDefault();
-        history.push('/feed')
+        if (location.state.flag == 'feed')
+            history.push('/feed');
+        else
+            history.push('/profile')
+    }
+    const onFeedClick = () => {
+        history.push("/feed")
+    }
+
+    const onProfileClick = () => {
+        history.push("/profile")
     }
     return (
         <React.Fragment>
@@ -27,7 +37,7 @@ const Post = ({ logoutUser, history, location }) => {
                     <PostCard post={location.state.post} />
                 </main>
             </Container>
-            <BottomAppBar />
+            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick}/>
         </React.Fragment>
     );
 }
