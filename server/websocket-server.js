@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
-const { WEBSOCKET_HOST, FEED_TOPIC, COMMENT_TOPIC } = require('./library/consts.js');
+const { FEED_TOPIC, COMMENT_TOPIC } = require('./library/consts.js');
 
-const wss = new WebSocket.Server({ port: WEBSOCKET_HOST });
+const wss = new WebSocket.Server({ port: 6000 });
 
 // TODO: Kafka stuff
 

@@ -27,6 +27,13 @@ module.exports = { // pm2 start process.config.js
       watch: true,
     },
     {
+      name: 'frontend',
+      script: './server/frontend.js',
+      ignore_watch : ["node_modules"],
+      watch: true,
+      instances: 2,
+    },
+    {
       name: 'user-server',
       script: './server/user-server.js',
       ignore_watch : ["node_modules"],
