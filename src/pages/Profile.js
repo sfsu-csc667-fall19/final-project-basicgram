@@ -154,7 +154,7 @@ const Profile = ({logoutUser, history, posts, fetchPostsByUserId}) => {
                     {user.name}
                 </Typography>
                 <GridList cellHeight={300} cols={3} spacing={20}>
-                    {posts.posts ? (posts.posts.map(post => (
+                    {posts.posts ? ([...posts.posts].reverse().map(post => (
                         <GridListTile 
                             key={post._id} 
                             post={post} 
