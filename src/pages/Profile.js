@@ -123,6 +123,14 @@ const Profile = ({logoutUser, history, posts, fetchPostsByUserId}) => {
         logoutUser();
     }
 
+    const onFeedClick = () => {
+        history.push("/feed")
+    }
+
+    const onProfileClick = () => {
+        history.push("/profile")
+    }
+
     return(
         <React.Fragment>
             {/* Essentially modified TopAppBar for profile page*/}
@@ -161,7 +169,7 @@ const Profile = ({logoutUser, history, posts, fetchPostsByUserId}) => {
                     ))) : <h1>No Posts Available</h1>}
                 </GridList>                                   
             </Container>
-            <BottomAppBar/>
+            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick}/>
         </React.Fragment>
     );
 }
