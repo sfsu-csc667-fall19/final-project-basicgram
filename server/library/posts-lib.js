@@ -2,10 +2,12 @@ const mongoose = require('mongoose');
 const Basicgram = require('../models/basicgramModel.js');
 const ObjectId = mongoose.Types.ObjectId;
 
+const CONSTANTS = require('./consts.js');
+
 
 class BasicgramsLibrary {
     // returns {caption, image, imageThumbnail, createdAt, author, comments, _id}
-    static createBasicgram(author, caption, image, imageThumbnail, res) {
+    static createBasicgram(author, caption, image, imageThumbnail, kafkaProducerLib, res) {
         const newBasicgram = new Basicgram({
             caption,
             image,
@@ -17,20 +19,21 @@ class BasicgramsLibrary {
 
         console.log(author);
 
-        newBasicgram.save((err) => {
+        return newBasicgram.save((err) => {
             if (err) {
                 console.log(err.name);
                 res.send({
                     err
                 });
 
-                return false;
+                return;
             }
         
             res.send({
                 newBasicgram
             });
-            return true;
+
+            kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_FEED_TOPIC, null);
         });
     };
     // returns { basicgrams: [array of posts]}

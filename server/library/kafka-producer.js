@@ -15,7 +15,6 @@ class KafkaProducerLibrary {
         console.log(err)
       } else {
         console.log(`[kafka-producer => ${topic}]: UPDATE SUCCESS`);
-        console.log("DATA RESPONSE FROM PRODUCTION: " + data);
       }
     });
   };

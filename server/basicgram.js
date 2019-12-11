@@ -9,8 +9,8 @@ const redisClient = redis.createClient();
 
 const BasicgramsLib = require('./library/posts-lib.js');
 const CommentsLib = require('./library/comments-lib.js');
-const CONSTANTS = require('./library/consts.js');
 const KafkaProducerLib = require('./library/kafka-producer.js');
+const CONSTANTS = require('./library/consts.js');
 require('./models/user-model.js');
 require('./models/basicgramModel.js');
 require('./models/commentModel.js');
@@ -47,8 +47,8 @@ cloudinary.config({
 // *** image stuff ***
 
 try {
-  const KafkaClient = new kafka.KafkaClient();
-  const kafkaProducer = new kafka.HighLevelProducer(KafkaClient);
+  const KafkaClient = new kafka.KafkaClient({kafkaHost:CONSTANTS.KAFKA_SERVER});
+  const kafkaProducer = new kafka.Producer(KafkaClient);
 
   kafkaProducer.on('ready', () => {
     const kafkaProducerLib = new KafkaProducerLib(kafkaProducer);
@@ -121,10 +121,12 @@ try {
           result.public_id;
 
         // get author name and username
-        if (BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, res)) {
-          let feedPushStatus = kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_FEED_TOPIC, null);
-          console.log("PRODUCER FEED PUSH STATUS: " + feedPushStatus);
-        }
+        let updateFeedPayload = [{
+          topic: CONSTANTS.KAFKA_FEED_TOPIC,
+          message: CONSTANTS.KAFKA_FEED_TOPIC
+        }];
+
+        BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, kafkaProducerLib, res)
       });
     });
 
@@ -154,10 +156,7 @@ try {
       const post = req.body.postId;
       const text = req.body.text;
 
-      if (CommentsLib.createComment(author, post, text, res)) {
-        let feedPushStatus = kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_COMMENT_TOPIC, post);
-        console.log("PRODUCER MESSAGE PUSH STATUS: " + feedPushStatus);
-      }
+      CommentsLib.createComment(author, post, text, kafkaProducerLib, res);
     });
 
     // find comment by Id
@@ -178,5 +177,5 @@ try {
     app.listen(PORT);
   });
 } catch (e) {
-  // console.log(e);
+  console.log(e);
 }

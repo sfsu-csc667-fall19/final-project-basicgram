@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
-const Comment = require('../models/commentModel.js');
-const BasicgramsLib = require('./posts-lib.js');
-require('../models/user-model.js');
-require('../models/basicgramModel.js');
-require('../models/commentModel.js');
 const ObjectId = mongoose.Types.ObjectId;
 
+const BasicgramsLib = require('./posts-lib.js');
+const Comment = require('../models/commentModel.js');
+const CONSTANTS = require('./consts.js');
+require('../models/basicgramModel.js');
+require('../models/commentModel.js');
+require('../models/user-model.js');
+
 class CommentsLibrary {
-    static createComment(author, post, text, res) {
+    static createComment(author, post, text, kafkaProducerLib, res) {
 
         const newComment = new Comment({
             author: new ObjectId(author),
@@ -39,7 +41,7 @@ class CommentsLibrary {
                     basicgram
                 });
 
-                return true;
+                kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_COMMENT_TOPIC, post);
             });
         });
     }

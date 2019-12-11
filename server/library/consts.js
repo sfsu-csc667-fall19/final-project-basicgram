@@ -4,5 +4,5 @@ module.exports = {
     WEBSOCKET_HOST: process.env.WEBSOCKET_HOST || 6000,
     KAFKA_FEED_TOPIC: 'feed',
     KAFKA_COMMENT_TOPIC: 'comment',
-    KAFKA_SERVER: 'localhost:2181'
+    KAFKA_SERVER: 'localhost:9092'
 };
