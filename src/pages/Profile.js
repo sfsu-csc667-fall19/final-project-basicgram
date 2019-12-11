@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import '../App.css'
+import '../Profile.css'
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
+import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 import TopAppBar from '../components/TopAppBar'
 import Typography from '@material-ui/core/Typography';
 import { fetchPostsByUserId } from '../redux/actions/postActions';
@@ -12,6 +13,7 @@ import Container from '@material-ui/core/Container';
 import { logoutUser } from '../redux/actions/authActions';
 import BottomAppBar from '../components/BottomAppBar';
 import Axios from "axios";
+import { Paper } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     // toolbar: {
@@ -33,7 +35,6 @@ const useStyles = makeStyles(theme => ({
         paddingTop: '2rem',
         paddingBottom: '0.5rem',
         alignContent: 'center',
-        fontFamily: '-apple-system, system-ui, "Segoe UI"',
     },
     toolbarSecondary: {
         justifyContent: 'space-between',
@@ -92,7 +93,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const Profile = ({logoutUser, history, posts, fetchPostsByUserId}) => {
+const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
 
     const classes = useStyles();
     const [user, setUser] = React.useState('');
@@ -112,8 +113,8 @@ const Profile = ({logoutUser, history, posts, fetchPostsByUserId}) => {
     React.useEffect(() => {
         const userId = getCook('userId')
         Axios.get(`/user/${userId}`)
-            .then(res=>{setUser(res.data.user)})
-            .catch(err=>{console.log(err)})
+            .then(res => { setUser(res.data.user) })
+            .catch(err => { console.log(err) })
         fetchPostsByUserId(userId);
     }, []);
 
@@ -123,10 +124,22 @@ const Profile = ({logoutUser, history, posts, fetchPostsByUserId}) => {
         logoutUser();
     }
 
-    return(
+    const getGridListCols = () => {
+        if (isWidthUp('lg', width)) {
+            return 3;
+        }
+
+        if (isWidthUp('md', width)) {
+            return 2;
+        }
+
+        return 1;
+    }
+
+    return (
         <React.Fragment>
             {/* Essentially modified TopAppBar for profile page*/}
-            <TopAppBar onLogoutClick={onLogoutClick}/>
+            <TopAppBar onLogoutClick={onLogoutClick} />
             <Container className={classes.container} maxWidth="md">
                 <Typography
                     component="h2"
@@ -145,11 +158,11 @@ const Profile = ({logoutUser, history, posts, fetchPostsByUserId}) => {
                 >
                     {user.name}
                 </Typography>
-                <GridList cellHeight={300} cols={3} spacing={20}>
+                <GridList cellHeight={300} cols={3} spacing={15}>
                     {posts.posts ? (posts.posts.map(post => (
-                        <GridListTile 
-                            key={post._id} 
-                            post={post} 
+                        <GridListTile
+                            key={post._id}
+                            post={post}
                             className='tileStyle'
                             onClick={() => history.push({
                                 pathname: `/feed/post/${post._id}`,
@@ -159,9 +172,9 @@ const Profile = ({logoutUser, history, posts, fetchPostsByUserId}) => {
                             <img src={post.image} />
                         </GridListTile>
                     ))) : <h1>No Posts Available</h1>}
-                </GridList>                                   
+                </GridList>
             </Container>
-            <BottomAppBar/>
+            <BottomAppBar />
         </React.Fragment>
     );
 }
