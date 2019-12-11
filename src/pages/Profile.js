@@ -124,19 +124,15 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
         logoutUser();
     }
 
-    const getGridListCols = () => {
-        if (isWidthUp('lg', width)) {
-            return 3;
-        }
-
-        if (isWidthUp('md', width)) {
-            return 2;
-        }
-
-        return 1;
+    const onFeedClick = () => {
+        history.push("/feed")
     }
 
-    return (
+    const onProfileClick = () => {
+        history.push("/profile")
+    }
+
+    return(
         <React.Fragment>
             {/* Essentially modified TopAppBar for profile page*/}
             <TopAppBar onLogoutClick={onLogoutClick} />
@@ -158,11 +154,11 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
                 >
                     {user.name}
                 </Typography>
-                <GridList cellHeight={300} cols={3} spacing={15}>
-                    {posts.posts ? (posts.posts.map(post => (
-                        <GridListTile
-                            key={post._id}
-                            post={post}
+                <GridList cellHeight={300} cols={3} spacing={20}>
+                    {posts.posts ? ([...posts.posts].reverse().map(post => (
+                        <GridListTile 
+                            key={post._id} 
+                            post={post} 
                             className='tileStyle'
                             onClick={() => history.push({
                                 pathname: `/feed/post/${post._id}`,
@@ -174,7 +170,7 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
                     ))) : <h1>No Posts Available</h1>}
                 </GridList>
             </Container>
-            <BottomAppBar />
+            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick}/>
         </React.Fragment>
     );
 }

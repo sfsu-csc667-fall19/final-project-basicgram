@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function BottomAppBar() {
+export default function BottomAppBar(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -42,10 +42,10 @@ export default function BottomAppBar() {
   
   return (
     <React.Fragment>
-      <AppBar position="fixed" color="primary" className={classes.appBarBottom}>
+      <AppBar position="fixed" color="primary" className={classes.appBarBottom} {...props}>
                 <Container maxWidth="sm">
                     <Toolbar>
-                        <IconButton edge="start" color="inherit">
+                        <IconButton edge="start" color="inherit" onClick={props.onFeedClick}>
                             <HomeRoundedIcon />
                         </IconButton>
                         <Fab color="primary" aria-label="add" className={classes.fabButton} onClick={handleClickOpen} >
@@ -53,7 +53,7 @@ export default function BottomAppBar() {
                         </Fab>
                         {open ? <PostUploadModal open={open} close={handleClose} /> : null}
                         <div className={classes.grow} />
-                        <IconButton edge="end" color="inherit">
+                        <IconButton edge="end" color="inherit" onClick={props.onProfileClick}>
                             <PersonRoundedIcon/>
                         </IconButton>
                     </Toolbar>
