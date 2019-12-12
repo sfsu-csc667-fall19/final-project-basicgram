@@ -18,7 +18,6 @@ import {
     FETCH_USER_POSTS_SUCCESS,
     POST_UPLOAD_SUCCESS
 } from "./redux/actions/types";
-// import { fetchAllPosts } from './redux/actions/postActions';
 import {
     FETCH_COMMENTS_SUCCESS,
     ADD_COMMENT,
@@ -58,22 +57,6 @@ const App = ({ dispatch }) => {
       case 'UPDATE_COMMENT':
         // TODO: UPDATE COMMENT... make an axios request or something
         console.log('UPDATE COMMENT', messageObject.postId);
-
-        // axios
-        //   .get('/basicgrams')
-        //   .then(res => {
-        //       console.log('successfully fetched posts', res.data);
-        //       dispatch({
-        //           type: FETCH_POSTS_SUCCESS,
-        //           payload: res.data.basicgrams,
-        //       })
-        //   })
-        //   .catch(err => {
-        //       dispatch({
-        //           type: GET_ERRORS,
-        //           payload: err.response.data
-        //       })
-        //   });
         axios
         .get(`/basicgrams/comment/post/${messageObject.postId}`)
         .then(res => {

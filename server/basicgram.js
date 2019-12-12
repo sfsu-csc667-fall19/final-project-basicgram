@@ -1,7 +1,6 @@
 const axios = require('axios');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
-const axios = require('axios');
 
 const {GATEWAY_HOST, MONGODB_URI} = require('./library/consts.js');
 
