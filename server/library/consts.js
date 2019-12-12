@@ -9,5 +9,8 @@ module.exports = {
     FRONT_END_HOST: process.env.FRONT_END_HOST || 'http://localhost:3000',
     MONGODB_URI: (process.env.MONGO_HOST && `${process.env.MONGO_HOST}/basicgram-database`) || 'mongodb://localhost:27017/basicgram-database',
     FEED_TOPIC: 'feed',
-    COMMENT_TOPIC: 'comment'
+    COMMENT_TOPIC: 'comment',
+    KAFKA_FEED_TOPIC: 'feed',
+    KAFKA_COMMENT_TOPIC: 'comment',
+    KAFKA_SERVER: 'localhost:9092'
 };

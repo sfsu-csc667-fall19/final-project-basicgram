@@ -1,4 +1,4 @@
-const express = require("express");
+const axios = require('axios');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const axios = require('axios');
@@ -6,14 +6,16 @@ const axios = require('axios');
 const {GATEWAY_HOST, MONGODB_URI} = require('./library/consts.js');
 
 // redis stuff
+const express = require("express");
+const kafka = require('kafka-node');
+const mongoose = require('mongoose');
 const redis = require("redis");
 const redisClient = redis.createClient();
-// redis stuff
 
-// mongoosey stuff
-const mongoose = require('mongoose');
 const BasicgramsLib = require('./library/posts-lib.js');
 const CommentsLib = require('./library/comments-lib.js');
+const KafkaProducerLib = require('./library/kafka-producer.js');
+const CONSTANTS = require('./library/consts.js');
 require('./models/user-model.js');
 require('./models/basicgramModel.js');
 require('./models/commentModel.js');
@@ -25,7 +27,6 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', (error) => {
     console.log("ERROR: " + error);
 });
-// mongoosey stuff
 
 // *** image stuff ***
 let multer = require("multer");
@@ -49,126 +50,136 @@ cloudinary.config({
 });
 // *** image stuff ***
 
-// express app stuff 
-const app = express();
-app.use(cookieParser());
-app.use(bodyParser());
-// Middleware caches token auth result
-app.use((req, res, next) => {
-  const token = req.cookies.token;
-  const userId = req.cookies.userId;
-  const body = {
-      token,
-      userId
-  };
+try {
+  const KafkaClient = new kafka.KafkaClient({kafkaHost:CONSTANTS.KAFKA_SERVER});
+  const kafkaProducer = new kafka.Producer(KafkaClient);
 
-  redisClient.get(token, (err, cachedValue) => {
-      console.log(err);
+  kafkaProducer.on('ready', () => {
+    const kafkaProducerLib = new KafkaProducerLib(kafkaProducer);
+    const app = express();
+    app.use(cookieParser());
+    app.use(bodyParser());
 
-      if ( cachedValue ) {
-        console.log('Cache hit!', cachedValue);
-        if ( cachedValue === 'true' ) {
-          console.log(cachedValue);
-          return next();
-        } else {
-          res.status(403);
-          return res.send({
-            valid: false
-          });
-        }
-      } else {
-        axios
-        .post(`${GATEWAY_HOST}/auth/verify`, body)
-        .then(response => {
-          console.log(response);
-          if ( response.data && response.data.valid ) {
-            console.log(response);
-            redisClient.set(token, true);
+    // Middleware caches token auth result
+    app.use((req, res, next) => {
+      const token = req.cookies.token;
+      const userId = req.cookies.userId;
+      const body = {
+        token,
+        userId
+      };
+
+      redisClient.get(token, (err, cachedValue) => {
+        console.log(err);
+
+        if ( cachedValue ) {
+          console.log('Cache hit!', cachedValue);
+          if ( cachedValue === 'true' ) {
+            console.log(cachedValue);
             return next();
           } else {
-            redisClient.set(token, false);
             res.status(403);
             return res.send({
               valid: false
             });
           }
-        })
-        .catch((e) => {
-          console.log(e);
-          res.status(404);
-          return res.send({
-            valid: false
+        } else {
+          axios.post(`${GATEWAY_HOST}/auth/verify`, body).then(response => {
+            console.log(response);
+            if ( response.data && response.data.valid ) {
+              console.log(response);
+              redisClient.set(token, true);
+              return next();
+            } else {
+              redisClient.set(token, false);
+              res.status(403);
+              return res.send({
+                valid: false
+              });
+            }
+          }).catch((e) => {
+            console.log(e);
+            res.status(404);
+            return res.send({
+              valid: false
+            });
           });
-        });
-      }
-  });
-});
-
-// create new post
-app.post("/basicgrams/new", upload.single("image"), (req, res) => {
-  cloudinary.uploader.upload(req.file.path, (result, err) => {
-    if (err) {
-      console.log("Image upload error...", err)
-      return res.send({
-        err
+        }
       });
-    }
+    });
 
-    const author = req.cookies.userId;
-    const caption = req.body.caption || '';
-    const image = result.secure_url;
-    const imageThumbnail = "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
-    result.public_id;
+    // create new post
+    app.post("/basicgrams/new", upload.single("image"), (req, res) => {
+      cloudinary.uploader.upload(req.file.path, (result, err) => {
+        if (err) {
+          console.log("Image upload error...", err)
+          return res.send({
+            err
+          });
+        }
 
-    // get author name and username
-    BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, res);
+        const author = req.cookies.userId;
+        const caption = req.body.caption || '';
+        const image = result.secure_url;
+        const imageThumbnail = "http://res.cloudinary.com/dzjtqbbua/image/upload/c_fit,h_400,w_400/" +
+          result.public_id;
+
+        // get author name and username
+        let updateFeedPayload = [{
+          topic: CONSTANTS.KAFKA_FEED_TOPIC,
+          message: CONSTANTS.KAFKA_FEED_TOPIC
+        }];
+
+        BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, kafkaProducerLib, res)
+      });
+    });
+
+    // get all posts
+    app.get("/basicgrams", (req, res) => {
+      BasicgramsLib.getAllBasicgrams(res);
+    });
+
+    // get post by basicgram id
+    app.get("/basicgrams/:id", (req, res) => {
+      const basicgramId = req.params.id;
+
+      BasicgramsLib.getBasicgramById(basicgramId, res);
+    });
+
+    // get post by user id
+    app.get("/basicgrams/user/:id", (req, res) => {
+      const userId = req.params.id;
+
+      BasicgramsLib.getBasicgramsByUser(userId, res);
+    });
+
+    // Comment endpoints
+    // create new comment
+    app.post("/basicgrams/comment/new", (req, res) => {
+      const author = req.cookies.userId;
+      const post = req.body.postId;
+      const text = req.body.text;
+
+      CommentsLib.createComment(author, post, text, kafkaProducerLib, res);
+    });
+
+    // find comment by Id
+    app.get("/basicgrams/comment/:id", (req, res) => {
+      const commentId = req.params.id;
+
+      CommentsLib.getCommentById(commentId, res);
+    });
+
+    // find comments by post
+    app.get("/basicgrams/comment/post/:id", (req, res) => {
+      const postId = req.params.id;
+
+      CommentsLib.getCommentsByPost(postId, res);
+    });
+
+    const PORT = 5000;
+    app.listen(PORT);
   });
-});
-
-// get all posts
-app.get("/basicgrams", (req, res) => {
-  BasicgramsLib.getAllBasicgrams(res);
-});
-
-// get post by basicgram id
-app.get("/basicgrams/:id", (req, res) => {
-  const basicgramId = req.params.id;
-
-  BasicgramsLib.getBasicgramById(basicgramId, res);
-});
-
-// get post by user id
-app.get("/basicgrams/user/:id", (req, res) => {
-  const userId = req.params.id;
-
-  BasicgramsLib.getBasicgramsByUser(userId, res);
-});
-
-// Comment endpoints
-// create new comment
-app.post("/basicgrams/comment/new", (req, res) => {
-  const author = req.cookies.userId;
-  const post = req.body.postId;
-  const text = req.body.text;
-
-  CommentsLib.createComment(author, post, text, res);
-});
-
-// find comment by Id
-app.get("/basicgrams/comment/:id", (req, res) => {
-  const commentId = req.params.id;
-
-  CommentsLib.getCommentById(commentId, res);
-});
-
-// find comments by post
-app.get("/basicgrams/comment/post/:id", (req, res) => {
-  const postId = req.params.id;
-
-  CommentsLib.getCommentsByPost(postId, res);
-});
-
-const PORT = 5000;
-app.listen(PORT);
-
-// /express app stuff 
+} catch (e) {
+  console.log(e);
+}

@@ -9,6 +9,7 @@ export const fetchCommentsByPost = (postId) => (dispatch) => {
     return axios
         .get(`/basicgrams/comment/post/${postId}`)
         .then(res => {
+            console.log(res.data);
             dispatch({
                 type: FETCH_COMMENTS_SUCCESS,
                 payload: res.data.comments,
