@@ -29,6 +29,7 @@ const Post = ({ logoutUser, history, location }) => {
     const onProfileClick = () => {
         history.push("/profile")
     }
+    console.log('location.state', location.state);
     return (
         <React.Fragment>
             <TopAppBar onLogoutClick={onLogoutClick} backButton={backButton} />
