@@ -32,7 +32,6 @@ const App = ({ dispatch }) => {
 
   webSocket.onmessage = (message) => {
     const messageObject = JSON.parse(message.data);
-    console.log(messageObject);
     switch(messageObject.type) {
       case 'UPDATE_FEED':
         // TODO : REFACTOR
@@ -48,6 +47,7 @@ const App = ({ dispatch }) => {
               })
           })
           .catch(err => {
+              console.log(err);
               dispatch({
                   type: GET_ERRORS_FEED,
                   payload: err.response.data

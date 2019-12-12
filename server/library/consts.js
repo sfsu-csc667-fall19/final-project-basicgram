@@ -1,7 +1,7 @@
 // some constants used across components
 // TODO: Add all them port host constants here
 module.exports = {
-    GATEWAY_HOST: process.env.WEBSOCKET_HOST || 'http://localhost:4000',
+    GATEWAY_HOST: process.env.GATEWAY_HOST || 'http://localhost:4000',
     WEBSOCKET_HOST: process.env.WEBSOCKET_HOST || 'http://localhost:6000',
     AUTH_SERVER_HOST: process.env.AUTH_SERVER_HOST || 'http://localhost:3002',
     USER_SERVER_HOST: process.env.USER_SERVER_HOST || 'http://localhost:3003',

@@ -11,6 +11,7 @@ module.exports = { // pm2 start process.config.js
       script: './server/basicgram.js',
       ignore_watch : ["node_modules"],
       watch: true,
+      exec_mode: 'cluster',
       instances: 2,
     },
     {
@@ -18,6 +19,7 @@ module.exports = { // pm2 start process.config.js
       script: './server/websocket-server.js',
       ignore_watch : ["node_modules"],
       watch: true,
+      exec_mode: 'cluster',
       instances: 2,
     },
     {
@@ -31,6 +33,7 @@ module.exports = { // pm2 start process.config.js
       script: './server/frontend.js',
       ignore_watch : ["node_modules"],
       watch: true,
+      exec_mode: 'cluster',
       instances: 2,
     },
     {
