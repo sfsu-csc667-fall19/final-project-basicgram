@@ -33,7 +33,7 @@ class BasicgramsLibrary {
                 newBasicgram
             });
 
-            kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_FEED_TOPIC, null);
+            kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_FEED_TOPIC, "post");
         });
     };
     // returns { basicgrams: [array of posts]}

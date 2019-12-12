@@ -1,9 +1,23 @@
 const WebSocket = require('ws');
-const { WEBSOCKET_HOST, FEED_TOPIC, COMMENT_TOPIC } = require('./library/consts.js');
-
+const { WEBSOCKET_HOST, KAFKA_FEED_TOPIC, KAFKA_COMMENT_TOPIC } = require('./library/consts.js');
 const wss = new WebSocket.Server({ port: WEBSOCKET_HOST });
+const KafkaConsumer = require('./library/kafka-consumer.js');
 
-// TODO: Kafka stuff
+// const KafkaClient = new kafka.KafkaClient({kafkaHost:CONSTANTS.KAFKA_SERVER}); // localhost:9092
+const consumer = new KafkaConsumer([KAFKA_FEED_TOPIC, KAFKA_COMMENT_TOPIC]);
+
+consumer.connect();
+// payload from producer contains a message string
+consumer.on('message', (message) => {
+    console.log(message);
+    if (message.topic === "feed") {
+        console.log("message received: updateFeed next");
+        updateFeed();
+    } else {
+        console.log("message received: updateComment next");
+        updateComment(message);
+    }
+});
 
 const broadcastMessage = (message) => {
     wss.clients.forEach((client) => {
