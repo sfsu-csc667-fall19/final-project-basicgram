@@ -3,12 +3,13 @@ FROM node:10-alpine
 WORKDIR /main
 
 COPY ./server/library /main/library
-COPY ./server/websocket.js /main
+COPY ./server/models /main/models
+COPY ./server/user-server.js /main
 COPY ./package.json /main
 COPY ./package-lock.json /main
 
 RUN npm install
 
-EXPOSE 6000
+EXPOSE 3003
 
-CMD ["node", "websocket.js"]
+CMD ["node", "user-server.js"]

@@ -1,6 +1,10 @@
 const axios = require('axios');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+
+const {GATEWAY_HOST, MONGODB_URI} = require('./library/consts.js');
+
+// redis stuff
 const express = require("express");
 const kafka = require('kafka-node');
 const mongoose = require('mongoose');
@@ -15,7 +19,6 @@ require('./models/user-model.js');
 require('./models/basicgramModel.js');
 require('./models/commentModel.js');
 
-const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 mongoose.connection.on('connected', () => {
     console.log("Connected to MongoDB");
@@ -80,7 +83,7 @@ try {
             });
           }
         } else {
-          axios.post('http://localhost:4000/auth/verify', body).then(response => {
+          axios.post(`${GATEWAY_HOST}/auth/verify`, body).then(response => {
             console.log(response);
             if ( response.data && response.data.valid ) {
               console.log(response);
