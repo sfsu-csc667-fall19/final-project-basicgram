@@ -10,7 +10,7 @@ consumer.connect();
 // payload from producer contains a message string
 consumer.on('message', (message) => {
     console.log(message);
-    if (message.topic === "post") {
+    if (message.topic === "feed") {
         console.log("message received: updateFeed next");
         updateFeed();
     } else {
