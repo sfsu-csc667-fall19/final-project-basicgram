@@ -35,7 +35,7 @@ class CommentsLibrary {
                     });
                     return;
                 }
-            
+                console.log(postId);
                 res.send({
                     comment,// return comment or basicgram here?
                     basicgram

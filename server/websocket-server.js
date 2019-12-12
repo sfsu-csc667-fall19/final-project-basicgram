@@ -15,7 +15,7 @@ consumer.on('message', (message) => {
         updateFeed();
     } else {
         console.log("message received: updateComment next");
-        updateComment(message);
+        updateComment(message.value);
     }
 });
 

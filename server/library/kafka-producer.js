@@ -6,7 +6,7 @@ class KafkaProducerLibrary {
   produceMessage(topic, message) {
     let updateFeedPayload = [{
       topic: topic,
-      message: message !== null ? message : topic
+      messages: message !== null ? message : topic
     }];
 
     return this.kafkaProducer.send(updateFeedPayload, (err, data) => {
