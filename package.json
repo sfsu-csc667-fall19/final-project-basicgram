@@ -41,9 +41,9 @@
     "build-basicgram": "docker build -f devops/basicgram.Dockerfile -t basicgram . && docker tag basicgram ericerer/basicgram && docker push ericerer/basicgram",
     "build-user-server": "docker build -f devops/user-server.Dockerfile -t user-server . && docker tag user-server ericerer/user-server && docker push ericerer/user-server",
     "build-auth-server": "docker build -f devops/auth-server.Dockerfile -t auth-server . && docker tag auth-server ericerer/auth-server && docker push ericerer/auth-server",
-    "build-frontend": "docker build -f devops/frontend.Dockerfile -t react . && docker tag react ericerer/react && docker push ericerer/react",
-    "build-all-docker": "npm run build-frontend && npm run build-gateway && npm run build-websocket && npm run build-basicgram && npm run build-user-server && npm runbuild-auth-server",
-    "deploy": "swarm init && docker-compose -f devops/docker-compose.yml pull && docker stack deploy -c devops/docker-compose.yml message-app",
+    "build-frontend": "docker build -f devops/frontend.Dockerfile -t frontend . && docker tag frontend ericerer/frontend && docker push ericerer/frontend",
+    "build-all-docker": "npm run build-frontend && npm run build-gateway && npm run build-websocket && npm run build-basicgram && npm run build-user-server && npm run build-auth-server",
+    "deploy": "docker swarm init && docker-compose -f devops/docker-compose.yml pull && docker stack deploy -c devops/docker-compose.yml message-app",
     "stop": "docker stack remove message-app"
   },
   "eslintConfig": {

@@ -41,10 +41,10 @@ services:
       - webnet
     environment: # placed into container
       - FRONT_END_HOST=http://frontend:3000
-      - AUTH_SERVER_HOST=http://auth:3002
+      - AUTH_SERVER_HOST=http://auth-server:3002
       - BASICGRAM_HOST=http://basicgram:5000
       - WEBSOCKET_HOST=http://websocket:6000/websocket
-      - USER_SERVER_HOST=http://user:3003
+      - USER_SERVER_HOST=http://user-server:3003
   frontend:
     image : ericerer/react
     ports:
