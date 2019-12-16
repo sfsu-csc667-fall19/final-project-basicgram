@@ -73,6 +73,7 @@ const SignUp = ({ registerUser, history, auth }) => {
         return userName != '' && userPassword != '' && userEmail != '' && userFName != '';
     }
 
+
     const submit = async (e) => {
         e.preventDefault();
         const newUser = {
@@ -112,7 +113,7 @@ const SignUp = ({ registerUser, history, auth }) => {
                                     label="Full Name"
                                     autoFocus
                                     value={userFName}
-                                    helperText ={userFError ? 'invalid full name':''}
+                                    helperText ={userFError ? 'full name cannot be blank':''}
                                     onChange={e => setUserFName(e.target.value)}
                                 />
                             </Grid>
@@ -127,7 +128,7 @@ const SignUp = ({ registerUser, history, auth }) => {
                                     name="userName"
                                     autoComplete="uname"
                                     value={userName}
-                                    helperText ={userError ? 'invalid username':''}
+                                    helperText ={userError ? 'username cannot be blank':''}
                                     onChange={e => setUserName(e.target.value)}
                                 />
                             </Grid>
@@ -142,7 +143,7 @@ const SignUp = ({ registerUser, history, auth }) => {
                                     name="email"
                                     autoComplete="email"
                                     value={userEmail}
-                                    helperText ={emailError ? 'invalid email address':''}
+                                    helperText ={emailError ? 'email address cannot be blank':''}
                                     onChange={e => setUserEmail(e.target.value)}
                                 />
                             </Grid>
@@ -158,7 +159,7 @@ const SignUp = ({ registerUser, history, auth }) => {
                                     id="password"
                                     autoComplete="current-password"
                                     value={userPassword}
-                                    helperText ={passwordError ? 'invalid password':''}
+                                    helperText ={passwordError ? 'password cannot be blank':''}
                                     onChange={e => setUserPassword(e.target.value)}
                                 />
                             </Grid>
