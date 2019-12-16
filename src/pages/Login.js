@@ -11,6 +11,7 @@ import PropTypes from "prop-types";
 import { Link, withRouter } from 'react-router-dom'
 import { connect } from "react-redux";
 import { loginUser } from "../redux/actions/authActions";
+import md5 from 'md5'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -53,18 +54,46 @@ const Login = ({ loginUser, auth, history }) => {
     const [userName, setUserName] = React.useState("");
     const [userPassword, setUserPassword] = React.useState("");
 
+    // error validator
+    const [userError, setUserError] = React.useState(false);
+    const [passwordError, setPasswordError] = React.useState(false);
+
+    // error message
+    const [userMessage, setUserMessage] = React.useState('');
+    const [passwordMessage,setPasswordMessage] = React.useState('');
+
+
+    function validate() {
+        if (userName === '')
+            setUserError(true);
+            setUserMessage('username cannot be blank');
+        if (userPassword === '')
+            setPasswordError(true);
+            setPasswordMessage('password cannot be blank');
+        return userName != '' && userPassword != '';
+    }
+
     const submit = async (e) => {
         e.preventDefault();
         const userData = {
             username: userName,
-            password: userPassword,
+            password: md5(userPassword),
         };
-        loginUser(userData)
+        if (validate()) {
+            loginUser(userData);
+            if (!auth.isAuthenticated) {
+                setPasswordMessage('invalid password');
+                setUserError(false);
+                setPasswordError(true);
+            }  
+        }
+   
     }
 
     if (auth.isAuthenticated) {
         history.push("/feed");
     }
+
 
     return (
         <Grid container component="main" className={classes.root}>
@@ -77,6 +106,7 @@ const Login = ({ loginUser, auth, history }) => {
           </Typography>
                     <form className={classes.form} onSubmit={submit} noValidate>
                         <TextField
+                            error = {userError}
                             variant="outlined"
                             margin="normal"
                             required
@@ -87,9 +117,11 @@ const Login = ({ loginUser, auth, history }) => {
                             autoComplete="username"
                             autoFocus
                             value={userName}
+                            helperText ={userError ? userMessage :''}
                             onChange={e => setUserName(e.target.value)}
                         />
                         <TextField
+                            error = {passwordError}
                             variant="outlined"
                             margin="normal"
                             required
@@ -100,6 +132,7 @@ const Login = ({ loginUser, auth, history }) => {
                             id="password"
                             autoComplete="current-password"
                             value={userPassword}
+                            helperText ={passwordError ? passwordMessage :''}
                             onChange={e => setUserPassword(e.target.value)}
                         />
                         <Button

@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
 //auth and redux
+import md5 from 'md5'
 import PropTypes from "prop-types";
 import { Link, withRouter } from 'react-router-dom'
 import { connect } from "react-redux";
@@ -56,18 +57,34 @@ const SignUp = ({ registerUser, history, auth }) => {
     const [userName, setUserName] = React.useState("");
     const [userFName, setUserFName] = React.useState("");
     const [userPassword, setUserPassword] = React.useState("");
+
+    // error validators
+    const [userError,setUserError] = React.useState(false)
+    const [emailError,setEmailError] = React.useState(false)
+    const [userFError,setUserFError] = React.useState(false)
+    const [passwordError,setPasswordError] = React.useState(false)
     // const [errors, setErrors] = React.useState({});
+
+    function validation() {
+        userName === '' ? setUserError(true) : setUserError(false);
+        userPassword === '' ? setPasswordError(true) : setPasswordError(false);
+        userEmail === '' ? setEmailError(true) : setEmailError(false);
+        userFName === '' ? setUserFError(true) : setUserFError(false);
+        return userName != '' && userPassword != '' && userEmail != '' && userFName != '';
+    }
+
 
     const submit = async (e) => {
         e.preventDefault();
         const newUser = {
             username: userName,
-            password: userPassword,
+            password: md5(userPassword),
             name: userFName,
             email: userEmail,
         };
         console.log(newUser)
-        registerUser(newUser, history)
+        if (validation())
+            registerUser(newUser, history);
     }
 
     if (auth.isAuthenticated) {
@@ -86,20 +103,23 @@ const SignUp = ({ registerUser, history, auth }) => {
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
+                                    error = {userFError}
                                     autoComplete="fname"
                                     name="fullName"
                                     variant="outlined"
-                                    required
+                                    required={true}
                                     fullWidth
                                     id="fullName"
                                     label="Full Name"
                                     autoFocus
                                     value={userFName}
+                                    helperText ={userFError ? 'full name cannot be blank':''}
                                     onChange={e => setUserFName(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    error={userError}
                                     variant="outlined"
                                     required
                                     fullWidth
@@ -108,11 +128,13 @@ const SignUp = ({ registerUser, history, auth }) => {
                                     name="userName"
                                     autoComplete="uname"
                                     value={userName}
+                                    helperText ={userError ? 'username cannot be blank':''}
                                     onChange={e => setUserName(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    error={emailError}
                                     variant="outlined"
                                     required
                                     fullWidth
@@ -121,11 +143,13 @@ const SignUp = ({ registerUser, history, auth }) => {
                                     name="email"
                                     autoComplete="email"
                                     value={userEmail}
+                                    helperText ={emailError ? 'email address cannot be blank':''}
                                     onChange={e => setUserEmail(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    error={passwordError}
                                     variant="outlined"
                                     required
                                     fullWidth
@@ -135,6 +159,7 @@ const SignUp = ({ registerUser, history, auth }) => {
                                     id="password"
                                     autoComplete="current-password"
                                     value={userPassword}
+                                    helperText ={passwordError ? 'password cannot be blank':''}
                                     onChange={e => setUserPassword(e.target.value)}
                                 />
                             </Grid>
