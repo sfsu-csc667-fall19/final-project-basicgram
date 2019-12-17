@@ -2,14 +2,14 @@ const axios = require('axios');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
-const {GATEWAY_HOST, MONGODB_URI} = require('./library/consts.js');
+const {GATEWAY_HOST, MONGODB_URI, REDIS_HOST} = require('./library/consts.js');
 
 // redis stuff
 const express = require("express");
 const kafka = require('kafka-node');
 const mongoose = require('mongoose');
 const redis = require("redis");
-const redisClient = redis.createClient();
+const redisClient = redis.createClient(REDIS_HOST);
 
 const BasicgramsLib = require('./library/posts-lib.js');
 const CommentsLib = require('./library/comments-lib.js');

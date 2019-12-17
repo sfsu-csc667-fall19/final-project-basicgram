@@ -39,7 +39,7 @@ services:
       replicas: 1
     networks:
       - webnet
-    environment: # placed into container
+    environment:
       - FRONT_END_HOST=http://frontend:3000
       - AUTH_SERVER_HOST=http://auth-server:3002
       - BASICGRAM_HOST=http://basicgram:5000
@@ -64,7 +64,7 @@ services:
     ports:
       - "6000:6000"
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
     networks:
@@ -81,7 +81,7 @@ services:
     ports:
       - "5000:5000"
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
     networks:
