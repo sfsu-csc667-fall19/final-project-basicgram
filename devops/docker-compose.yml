@@ -45,6 +45,7 @@ services:
       - BASICGRAM_HOST=http://basicgram:5000
       - WEBSOCKET_HOST=http://websocket:6000/websocket
       - USER_SERVER_HOST=http://user-server:3003
+      - KAFKA_HOST=kafka
   frontend:
     image : ericerer/react
     ports:
@@ -64,13 +65,14 @@ services:
     ports:
       - "6000:6000"
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: on-failure
     networks:
       - webnet
     environment:
       - REDIS_HOST=redis
+      - KAFKA_HOST=kafka
   basicgram:
     image : ericerer/basicgram
     depends_on:
@@ -81,7 +83,7 @@ services:
     ports:
       - "5000:5000"
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: on-failure
     networks:
@@ -90,6 +92,7 @@ services:
       - REDIS_HOST=redis
       - MONGO_HOST=mongodb://mongodb:27017
       - GATEWAY_HOST=http://gateway:4000
+      - KAFKA_HOST=kafka
   auth-server:
     image : ericerer/auth-server
     depends_on:

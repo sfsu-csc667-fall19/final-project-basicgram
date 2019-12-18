@@ -15,5 +15,6 @@ module.exports = {
     COMMENT_TOPIC: 'comment',
     KAFKA_FEED_TOPIC: 'feed',
     KAFKA_COMMENT_TOPIC: 'comment',
-    KAFKA_SERVER: 'localhost:9092'
+    KAFKA_SERVER: 'localhost:9092',
+    KAFKA_HOST: process.env.KAFKA_HOST || 'localhost',
 };
