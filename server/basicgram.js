@@ -52,7 +52,7 @@ cloudinary.config({
 // *** image stuff ***
 
 try {
-  const KafkaClient = new kafka.KafkaClient({kafkaHost:'kafka'});
+  const KafkaClient = new kafka.KafkaClient({kafkaHost:'kafka:9092'});
   const kafkaProducer = new kafka.Producer(KafkaClient);
 
   kafkaProducer.on('ready', () => {
