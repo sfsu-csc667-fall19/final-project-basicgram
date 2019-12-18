@@ -10,6 +10,8 @@ const {MONGODB_URI} = require('./library/consts.js');
 
 const port = 3003;
 
+// const MONGODB_URI = 'mongodb://mongodb:27017/basicgram-database';
+
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 mongoose.connection.on('connected', () => {
     console.log("Connected to MongoDB");

@@ -2,8 +2,10 @@ const axios = require('axios');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
-const {GATEWAY_HOST, MONGODB_URI, REDIS_HOST} = require('./library/consts.js');
-
+// const {GATEWAY_HOST, MONGODB_URI, REDIS_HOST} = require('./library/consts.js');
+const GATEWAY_HOST = 'http://gateway:4000';
+const MONGODB_URI = 'mongodb://mongodb:27017/basicgram-database';
+const REDIS_HOST = 'redis';
 // redis stuff
 const express = require("express");
 const kafka = require('kafka-node');
@@ -14,7 +16,7 @@ const redisClient = redis.createClient(REDIS_HOST);
 const BasicgramsLib = require('./library/posts-lib.js');
 const CommentsLib = require('./library/comments-lib.js');
 const KafkaProducerLib = require('./library/kafka-producer.js');
-const CONSTANTS = require('./library/consts.js');
+
 require('./models/user-model.js');
 require('./models/basicgramModel.js');
 require('./models/commentModel.js');
@@ -50,7 +52,7 @@ cloudinary.config({
 // *** image stuff ***
 
 try {
-  const KafkaClient = new kafka.KafkaClient({kafkaHost:CONSTANTS.KAFKA_SERVER});
+  const KafkaClient = new kafka.KafkaClient({kafkaHost:'kafka'});
   const kafkaProducer = new kafka.Producer(KafkaClient);
 
   kafkaProducer.on('ready', () => {
@@ -125,8 +127,8 @@ try {
 
         // get author name and username
         let updateFeedPayload = [{
-          topic: CONSTANTS.KAFKA_FEED_TOPIC,
-          message: CONSTANTS.KAFKA_FEED_TOPIC
+          topic: 'feed',
+          message: 'comment'
         }];
 
         BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, kafkaProducerLib, res)

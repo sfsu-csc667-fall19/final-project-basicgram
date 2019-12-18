@@ -24,9 +24,6 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
-// const webSocket = new WebSocket('ws://' + window.location.host.split(':')[0] + (window.location.port && `:${window.location.port}`) + '/websocket');
-
-
 export const getAllPosts = (state) => {
   return postReducer.getAllPosts(state.posts);
 };
@@ -34,28 +31,6 @@ export const getAllPosts = (state) => {
 export const getPostById = (state, id) => {
   return postReducer.getPostById(state.posts, id);
 };
-
-// webSocket.onmessage = (message) => {
-//   const messageObject = JSON.parse(message.data);
-//   console.log(messageObject);
-//   switch(messageObject.type) {
-//     case 'UPDATE_FEED':
-//       // TODO: UPDATE FEED... make an axios request or something
-//       console.log('UPDATE POSTERS');
-
-//       break;
-//     case 'UPDATE_COMMENT':
-//       // TODO: UPDATE COMMENT... make an axios request or something
-//       console.log('UPDATE COMMENT', messageObject.postId);
-//       break;
-//     default:
-//       console.log('Unexpected message.');
-//   }
-// };
-
-// webSocket.onerror = e => {
-//   console.log(e);
-// }
 
 ReactDOM.render(
   <Provider store={store}>

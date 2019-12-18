@@ -20,7 +20,7 @@ services:
     ports:
       - "9092:9092"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ADVERTISED_PORT: "9092"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     networks:
@@ -56,23 +56,40 @@ services:
         condition: on-failure
     networks:
       - webnet
-  websocket:
-    image : ericerer/websocket
+  auth-server:
+    image : ericerer/auth-server
     depends_on:
       - redis
-      - kafka
-      - zookeeper
+      - mongodb
     ports:
-      - "6000:6000"
+      - "3002:3002"
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
     networks:
       - webnet
     environment:
       - REDIS_HOST=redis
-      - KAFKA_HOST=kafka
+      - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
+      - GATEWAY_HOST=http://gateway:4000
+  user-server:
+    image : ericerer/user-server
+    depends_on:
+      - redis
+      - mongodb
+    ports:
+      - "3003:3003"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - webnet
+    environment:
+      - REDIS_HOST=redis
+      - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
+      - GATEWAY_HOST=http://gateway:4000
   basicgram:
     image : ericerer/basicgram
     depends_on:
@@ -90,42 +107,25 @@ services:
       - webnet
     environment:
       - REDIS_HOST=redis
-      - MONGO_HOST=mongodb://mongodb:27017
+      - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
       - GATEWAY_HOST=http://gateway:4000
       - KAFKA_HOST=kafka
-  auth-server:
-    image : ericerer/auth-server
+  websocket:
+    image : ericerer/websocket
     depends_on:
       - redis
-      - mongodb
+      - kafka
+      - zookeeper
     ports:
-      - "3002:3002"
+      - "6000:6000"
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: on-failure
     networks:
       - webnet
     environment:
       - REDIS_HOST=redis
-      - MONGO_HOST=mongodb://mongodb:27017
-      - GATEWAY_HOST=http://gateway:4000
-  user-server:
-    image : ericerer/user-server
-    depends_on:
-      - redis
-      - mongodb
-    ports:
-      - "3003:3003"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    networks:
-      - webnet
-    environment:
-      - REDIS_HOST=redis
-      - MONGO_HOST=mongodb://mongodb:27017
-      - GATEWAY_HOST=http://gateway:4000
+      - KAFKA_HOST=kafka
 networks:
   webnet:

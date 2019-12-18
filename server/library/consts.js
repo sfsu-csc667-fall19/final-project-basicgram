@@ -1,6 +1,5 @@
 // some constants used across components
 // TODO: Add all them port host constants here
-const mongo_host = process.env.MONGO_HOST ? `${process.env.MONGO_HOST}/basicgram-database` : 'mongodb://localhost:27017/basicgram-database';
 
 module.exports = {
     GATEWAY_HOST: process.env.GATEWAY_HOST || 'http://localhost:4000',
@@ -10,7 +9,7 @@ module.exports = {
     BASICGRAM_HOST: process.env.BASICGRAM_HOST || 'http://localhost:5000',
     FRONT_END_HOST: process.env.FRONT_END_HOST || 'http://localhost:3000',
     REDIS_HOST: process.env.REDIS_HOST || 'localhost',
-    MONGODB_URI: mongo_host,
+    MONGODB_URI: process.env.MONGO_HOST || 'mongodb://localhost:27017/basicgram-database',
     FEED_TOPIC: 'feed',
     COMMENT_TOPIC: 'comment',
     KAFKA_FEED_TOPIC: 'feed',

@@ -32,15 +32,16 @@ appServer.on('upgrade', (req, socket, head) => {
   wsProxy.ws(req, socket, head);
 });
 
-console.log(`Basicgram end proxies to: ${BASICGRAM_HOST}`);
-app.all('/basicgram*', (req, res) => {
-  apiProxy.web(req, res, { target: BASICGRAM_HOST });
-});
 
 console.log(`WebSocket end proxies to: ${WEBSOCKET_HOST}/websocket`);
 app.all('/websocket*', (req, res) => {
   console.log('incoming ws');
   apiProxy.web(req, res, { target: `${WEBSOCKET_HOST}/websocket` });
+});
+
+console.log(`Basicgram end proxies to: ${BASICGRAM_HOST}`);
+app.all('/basicgrams*', (req, res) => {
+  apiProxy.web(req, res, { target: BASICGRAM_HOST });
 });
 
 console.log(`Auth service proxies to: ${AUTH_SERVER_HOST}`);

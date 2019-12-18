@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Basicgram = require('../models/basicgramModel.js');
 const ObjectId = mongoose.Types.ObjectId;
 
-const CONSTANTS = require('./consts.js');
+// const CONSTANTS = require('./consts.js');
 
 
 class BasicgramsLibrary {
@@ -33,7 +33,7 @@ class BasicgramsLibrary {
                 newBasicgram
             });
 
-            kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_FEED_TOPIC, "post");
+            kafkaProducerLib.produceMessage('feed', "post");
         });
     };
     // returns { basicgrams: [array of posts]}
