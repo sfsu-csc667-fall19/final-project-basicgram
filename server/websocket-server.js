@@ -10,20 +10,20 @@ const KAFKA_FEED_TOPIC = 'feed';
 const KAFKA_COMMENT_TOPIC = 'comment';
 
 // const KafkaClient = new kafka.KafkaClient({kafkaHost:CONSTANTS.KAFKA_SERVER}); // localhost:9092
-// const consumer = new KafkaConsumer([KAFKA_FEED_TOPIC, KAFKA_COMMENT_TOPIC]);
+const consumer = new KafkaConsumer([KAFKA_FEED_TOPIC, KAFKA_COMMENT_TOPIC]);
 
-// consumer.connect();
-// // payload from producer contains a message string
-// consumer.on('message', (message) => {
-//     console.log(message);
-//     if (message.topic === "feed") {
-//         console.log("message received: updateFeed next");
-//         updateFeed();
-//     } else {
-//         console.log("message received: updateComment next");
-//         updateComment(message.value);
-//     }
-// });
+consumer.connect();
+// payload from producer contains a message string
+consumer.on('message', (message) => {
+    console.log(message);
+    if (message.topic === "feed") {
+        console.log("message received: updateFeed next");
+        updateFeed();
+    } else {
+        console.log("message received: updateComment next");
+        updateComment(message.value);
+    }
+});
 
 const broadcastMessage = (message) => {
     wss.clients.forEach((client) => {
