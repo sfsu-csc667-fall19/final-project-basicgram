@@ -9,11 +9,13 @@ module.exports = {
     BASICGRAM_HOST: process.env.BASICGRAM_HOST || 'http://localhost:5000',
     FRONT_END_HOST: process.env.FRONT_END_HOST || 'http://localhost:3000',
     REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+    REDIS_PORT: 6379,
     MONGODB_URI: process.env.MONGO_HOST || 'mongodb://localhost:27017/basicgram-database',
     FEED_TOPIC: 'feed',
     COMMENT_TOPIC: 'comment',
     KAFKA_FEED_TOPIC: 'feed',
     KAFKA_COMMENT_TOPIC: 'comment',
-    KAFKA_SERVER: 'localhost:9092',
-    KAFKA_HOST: process.env.KAFKA_HOST || 'localhost',
+    KAFKA_SERVER: process.env.KAFKA_HOST || 'localhost:9092',
+    KAFKA_HOST: process.env.KAFKA_HOST || 'localhost:9092',
+    
 };

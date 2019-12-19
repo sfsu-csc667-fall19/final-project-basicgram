@@ -3,12 +3,12 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 6000 });
 
 // TODO: Kafka stuff
-// const { KAFKA_FEED_TOPIC, KAFKA_COMMENT_TOPIC } = require('./library/consts.js');
+const { KAFKA_FEED_TOPIC, KAFKA_COMMENT_TOPIC } = require('./library/consts.js');
+
+// const KAFKA_FEED_TOPIC = 'feed';
+// const KAFKA_COMMENT_TOPIC = 'comment';
+
 const KafkaConsumer = require('./library/kafka-consumer.js');
-
-const KAFKA_FEED_TOPIC = 'feed';
-const KAFKA_COMMENT_TOPIC = 'comment';
-
 // const KafkaClient = new kafka.KafkaClient({kafkaHost:CONSTANTS.KAFKA_SERVER}); // localhost:9092
 const consumer = new KafkaConsumer([KAFKA_FEED_TOPIC, KAFKA_COMMENT_TOPIC]);
 
@@ -49,10 +49,10 @@ const updateComment = (postId) => {
 
 wss.on('connection', (ws) => {
     console.log('Someone has connected');
-    broadcastMessage({
-        type: 'TEST',
-        message: 'Someone has connected!'
-    });
+    // broadcastMessage({
+    //     type: 'TEST',
+    //     message: 'Someone has connected!'
+    // });
     ws.on('close', () => {
         console.log('someone has disconnected!');
     });

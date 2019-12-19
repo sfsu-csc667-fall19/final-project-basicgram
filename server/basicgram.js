@@ -2,16 +2,19 @@ const axios = require('axios');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
-// const {GATEWAY_HOST, MONGODB_URI, REDIS_HOST} = require('./library/consts.js');
-const GATEWAY_HOST = 'http://gateway:4000';
-const MONGODB_URI = 'mongodb://mongodb:27017/basicgram-database';
-const REDIS_HOST = 'redis';
+const {GATEWAY_HOST, MONGODB_URI, REDIS_HOST, REDIS_PORT, KAFKA_HOST} = require('./library/consts.js');
+// const GATEWAY_HOST = 'http://gateway:4000';
+// const MONGODB_URI = 'mongodb://mongodb:27017/basicgram-database';
+// const REDIS_HOST = 'redis';
 // redis stuff
 const express = require("express");
 const kafka = require('kafka-node');
 const mongoose = require('mongoose');
 const redis = require("redis");
-const redisClient = redis.createClient(REDIS_HOST);
+const redisClient = redis.createClient({
+  host:REDIS_HOST,
+  port: REDIS_PORT
+});
 
 const BasicgramsLib = require('./library/posts-lib.js');
 const CommentsLib = require('./library/comments-lib.js');
@@ -50,12 +53,15 @@ cloudinary.config({
   api_secret: "n1jUnMK_r3B3hGuVIHasS7kHj1Y"
 });
 // *** image stuff ***
-
+const consts = require('./library/consts.js');
 try {
-  const KafkaClient = new kafka.KafkaClient({kafkaHost:'kafka:9092'});
+  const KafkaClient = new kafka.KafkaClient({kafkaHost:KAFKA_HOST});
   const kafkaProducer = new kafka.Producer(KafkaClient);
 
+  
   kafkaProducer.on('ready', () => {
+    console.log('producer ready!');
+    console.log(consts);
     const kafkaProducerLib = new KafkaProducerLib(kafkaProducer);
     const app = express();
     app.use(cookieParser());
@@ -69,7 +75,12 @@ try {
         token,
         userId
       };
-
+      if ( !token || !userId ) {
+        res.status(403);
+        res.send({
+          valid: false
+        });
+      }
       redisClient.get(token, (err, cachedValue) => {
         console.log(err);
 

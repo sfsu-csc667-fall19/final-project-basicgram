@@ -24,13 +24,13 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
-export const getAllPosts = (state) => {
-  return postReducer.getAllPosts(state.posts);
-};
+// export const getAllPosts = (state) => {
+//   return postReducer.getAllPosts(state.posts);
+// };
 
-export const getPostById = (state, id) => {
-  return postReducer.getPostById(state.posts, id);
-};
+// export const getPostById = (state, id) => {
+//   return postReducer.getPostById(state.posts, id);
+// };
 
 ReactDOM.render(
   <Provider store={store}>

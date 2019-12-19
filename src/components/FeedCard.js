@@ -30,10 +30,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const FeedCard = ({addComment, post, onClickPost }) => {
+const FeedCard = ({addComment, post, onClickPost, onProfileClick }) => {
   const classes = useStyles();
   const [comment, setComment] = React.useState("");
-  
+
   const submit = async (e) => {
     e.preventDefault();
     addComment(post._id, comment).then(() => setComment(''));
@@ -41,10 +41,10 @@ const FeedCard = ({addComment, post, onClickPost }) => {
   return (
     <Grid item className={classes.mainGrid} xs={12} md={12}>
       <Card className={classes.card} elevation={3}>
-        <CardActionArea onClick={onClickPost}>
+        <CardActionArea>
           <CardContent>
             <Typography component="subtitle1" variant="subtitle1">
-              <b>{post.author.username}</b>
+              <Button onClick={()=>onProfileClick(post.author._id)}><b>{post.author.username}</b></Button>
             </Typography>
           </CardContent>
           <Divider />
@@ -52,6 +52,7 @@ const FeedCard = ({addComment, post, onClickPost }) => {
             className={classes.media}
             image={post.image}
             title="Image title"
+            onClick={onClickPost}
           />
           <CardContent>
             <Typography component="subtitle2" variant="subtitle2">

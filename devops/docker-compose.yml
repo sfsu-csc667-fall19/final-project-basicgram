@@ -46,7 +46,7 @@ services:
       - BASICGRAM_HOST=http://basicgram:5000
       - WEBSOCKET_HOST=http://websocket:6000/websocket
       - USER_SERVER_HOST=http://user-server:3003
-      - KAFKA_HOST=kafka
+      - KAFKA_HOST=kafka:9092
   frontend:
     image : ericerer/react
     ports:
@@ -74,6 +74,7 @@ services:
       - REDIS_HOST=redis
       - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
       - GATEWAY_HOST=http://gateway:4000
+      - KAFKA_HOST=kafka:9092
   user-server:
     image : ericerer/user-server
     depends_on:
@@ -91,6 +92,7 @@ services:
       - REDIS_HOST=redis
       - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
       - GATEWAY_HOST=http://gateway:4000
+      - KAFKA_HOST=kafka:9092
   basicgram:
     image : ericerer/basicgram
     depends_on:
@@ -110,7 +112,7 @@ services:
       - REDIS_HOST=redis
       - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
       - GATEWAY_HOST=http://gateway:4000
-      - KAFKA_HOST=kafka
+      - KAFKA_HOST=kafka:9092
   websocket:
     image : ericerer/websocket
     depends_on:
@@ -126,7 +128,6 @@ services:
     networks:
       - webnet
     environment:
-      - REDIS_HOST=redis
-      - KAFKA_HOST=kafka
+      - KAFKA_HOST=kafka:9092
 networks:
   webnet:

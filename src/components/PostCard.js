@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const PostCard = ({ fetchCommentsByPost, addComment, comments, post }) => {
+const PostCard = ({ fetchCommentsByPost, addComment, comments, post, onProfileClick }) => {
     const [comment, setComment] = React.useState("");
     const classes = useStyles();
 
@@ -58,7 +58,7 @@ const PostCard = ({ fetchCommentsByPost, addComment, comments, post }) => {
                     <div className={classes.cardDetails}>
                         <CardActions className={classes.infoSection}>
                             <Typography component="subtitle1" variant="subtitle1">
-                                <b>{post.author.username}</b>
+                                <Button onClick={()=>onProfileClick(post.author._id)}><b>{post.author.username}</b></Button>
                             </Typography>
                         </CardActions>
                         <Divider />
