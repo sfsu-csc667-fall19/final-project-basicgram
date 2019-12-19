@@ -2,19 +2,24 @@ const axios = require('axios');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
-const {GATEWAY_HOST, MONGODB_URI} = require('./library/consts.js');
-
+const {GATEWAY_HOST, MONGODB_URI, REDIS_HOST, REDIS_PORT, KAFKA_HOST} = require('./library/consts.js');
+// const GATEWAY_HOST = 'http://gateway:4000';
+// const MONGODB_URI = 'mongodb://mongodb:27017/basicgram-database';
+// const REDIS_HOST = 'redis';
 // redis stuff
 const express = require("express");
 const kafka = require('kafka-node');
 const mongoose = require('mongoose');
 const redis = require("redis");
-const redisClient = redis.createClient();
+const redisClient = redis.createClient({
+  host:REDIS_HOST,
+  port: REDIS_PORT
+});
 
 const BasicgramsLib = require('./library/posts-lib.js');
 const CommentsLib = require('./library/comments-lib.js');
 const KafkaProducerLib = require('./library/kafka-producer.js');
-const CONSTANTS = require('./library/consts.js');
+
 require('./models/user-model.js');
 require('./models/basicgramModel.js');
 require('./models/commentModel.js');
@@ -48,12 +53,15 @@ cloudinary.config({
   api_secret: "n1jUnMK_r3B3hGuVIHasS7kHj1Y"
 });
 // *** image stuff ***
-
+const consts = require('./library/consts.js');
 try {
-  const KafkaClient = new kafka.KafkaClient({kafkaHost:CONSTANTS.KAFKA_SERVER});
+  const KafkaClient = new kafka.KafkaClient({kafkaHost:KAFKA_HOST});
   const kafkaProducer = new kafka.Producer(KafkaClient);
 
+  
   kafkaProducer.on('ready', () => {
+    console.log('producer ready!');
+    console.log(consts);
     const kafkaProducerLib = new KafkaProducerLib(kafkaProducer);
     const app = express();
     app.use(cookieParser());
@@ -67,7 +75,12 @@ try {
         token,
         userId
       };
-
+      if ( !token || !userId ) {
+        res.status(403);
+        res.send({
+          valid: false
+        });
+      }
       redisClient.get(token, (err, cachedValue) => {
         console.log(err);
 
@@ -125,8 +138,8 @@ try {
 
         // get author name and username
         let updateFeedPayload = [{
-          topic: CONSTANTS.KAFKA_FEED_TOPIC,
-          message: CONSTANTS.KAFKA_FEED_TOPIC
+          topic: 'feed',
+          message: 'comment'
         }];
 
         BasicgramsLib.createBasicgram(author, caption, image, imageThumbnail, kafkaProducerLib, res)

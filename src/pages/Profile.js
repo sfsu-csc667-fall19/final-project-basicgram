@@ -107,7 +107,11 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
     // 3) store them in the user state
     // 4) fetch all the posts made by the user
     React.useEffect(() => {
-        const userId = getCook('userId')
+        // const userId = getCook('userId')
+        // parse url for id
+        const paths = window.location.href.split('/');
+        const userId = paths[paths.length - 1];
+        console.log(userId);
         Axios.get(`/user/${userId}`)
             .then(res => { setUser(res.data.user) })
             .catch(err => { console.log(err) })
@@ -124,8 +128,8 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
         history.push("/feed")
     }
 
-    const onProfileClick = () => {
-        history.push("/profile")
+    const onProfileClick = (userId) => {
+        history.push(`/profile/${userId}`);
     }
 
     return(
@@ -186,7 +190,7 @@ const Profile = ({ logoutUser, history, posts, fetchPostsByUserId, width }) => {
             )}
                 </GridList>
             </Container>
-            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick}/>
+            <BottomAppBar onProfileClick={() => onProfileClick(getCook('userId'))} onFeedClick={onFeedClick}/>
         </React.Fragment>
     );
 }

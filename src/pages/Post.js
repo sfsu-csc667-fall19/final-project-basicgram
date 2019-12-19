@@ -26,8 +26,16 @@ const Post = ({ logoutUser, history, location }) => {
         history.push("/feed")
     }
 
-    const onProfileClick = () => {
-        history.push("/profile")
+    // Courtesy of stack over flow :D
+    const getCook = (cookiename) => {
+        // Get name followed by anything except a semicolon
+        let cookiestring = RegExp("" + cookiename + "[^;]+").exec(document.cookie);
+        // Return everything after the equal sign, or an empty string if the cookie name not found
+        return decodeURIComponent(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./, "") : "");
+    }
+
+    const onProfileClick = (userId) => {
+        history.push(`/profile/${userId}`);
     }
     console.log('location.state', location.state);
     return (
@@ -35,10 +43,10 @@ const Post = ({ logoutUser, history, location }) => {
             <TopAppBar onLogoutClick={onLogoutClick} backButton={backButton} />
             <Container maxWidth="md">
                 <main>
-                    <PostCard post={location.state.post} />
+                    <PostCard post={location.state.post} onProfileClick={onProfileClick}/>
                 </main>
             </Container>
-            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick}/>
+            <BottomAppBar onProfileClick={() => onProfileClick(getCook('userId'))} onFeedClick={onFeedClick}/>
         </React.Fragment>
     );
 }

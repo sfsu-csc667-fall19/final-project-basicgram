@@ -3,7 +3,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const BasicgramsLib = require('./posts-lib.js');
 const Comment = require('../models/commentModel.js');
-const CONSTANTS = require('./consts.js');
+// const CONSTANTS = require('./consts.js');
 require('../models/basicgramModel.js');
 require('../models/commentModel.js');
 require('../models/user-model.js');
@@ -41,7 +41,7 @@ class CommentsLibrary {
                     basicgram
                 });
 
-                kafkaProducerLib.produceMessage(CONSTANTS.KAFKA_COMMENT_TOPIC, post);
+                kafkaProducerLib.produceMessage('comment', post);
             });
         });
     }

@@ -34,7 +34,6 @@ module.exports = { // pm2 start process.config.js
       ignore_watch : ["node_modules"],
       watch: true,
       exec_mode: 'cluster',
-      instances: 2,
     },
     {
       name: 'user-server',

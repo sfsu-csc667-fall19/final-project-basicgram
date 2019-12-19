@@ -42,8 +42,8 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
         history.push("/feed")
     }
 
-    const onProfileClick = () => {
-        history.push("/profile")
+    const onProfileClick = (userId) => {
+        history.push(`/profile/${userId}`);
     }
 
     console.log(posts.posts)
@@ -55,7 +55,7 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
                 {/* posts */}
                 <Grid container spacing={3}>
                     {posts.posts.length > 0 ? ([...posts.posts].reverse().map(post => (
-                        <FeedCard post={post} onClickPost={() => history.push({
+                        <FeedCard post={post} onProfileClick={onProfileClick} onClickPost={() => history.push({
                             pathname: `/feed/post/${post._id}`,
                             state: { post: post, flag: 'feed' }
                         })} />
@@ -81,7 +81,7 @@ const Feed = ({ logoutUser, history, fetchAllPosts, posts }) => {
                 </Grid>
                 {/* End sub featured posts */}
             </Container>
-            <BottomAppBar onProfileClick={onProfileClick} onFeedClick={onFeedClick} />
+            <BottomAppBar onProfileClick={() => onProfileClick(getCook('userId'))} onFeedClick={onFeedClick} />
         </React.Fragment>
     );
 }

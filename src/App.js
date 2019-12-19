@@ -28,7 +28,8 @@ import {
 
 const App = ({ dispatch }) => {
 
-  const webSocket = new WebSocket('ws://' + window.location.host.split(':')[0] + (window.location.port && `:${window.location.port}`) + '/websocket');
+  // const webSocket = new WebSocket('ws://' + window.location.host.split(':')[0] + (window.location.port && `:${window.location.port}`) + '/websocket');
+  const webSocket = new WebSocket('ws://localhost:4000/websocket');
 
   webSocket.onmessage = (message) => {
     const messageObject = JSON.parse(message.data);
@@ -97,8 +98,8 @@ const App = ({ dispatch }) => {
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
         <PrivateRoute exact path="/feed" component={Feed} />
-        <Route exact path="/profile" component={Profile} />
-        <Route path="/feed/post" component={Post} />
+        <PrivateRoute path="/profile" component={Profile} />
+        <PrivateRoute path="/feed/post" component={Post} />
       </Switch>
     </div>
   );
